@@ -26,14 +26,16 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - 설정의 감지 상태는 집중 비활성, 전경 창 조회 실패, 보호 창, 제목 조회 실패, 규칙 불일치, 일치 성공을 구분해 실제 제목이나 경로를 노출하지 않고 표시한다.
 - 설정창 자체가 전경이 되면 앱 자체 보호 판정으로 Safari 후보와 유예가 취소되던 문제를 수정했다. 평상시 polling도 앱 PID를 제외하고 그 뒤의 외부 전경창을 읽으며, 전체 화면 보호는 일반 시스템/자체 창 보호와 별도 상태로 표시한다.
 - 후속 검증에서 자체 PID 제외 시 CoreGraphics가 외부 창을 돌려주지 않아 `전경 창을 읽지 못했습니다`가 표시됐다. Safari가 전경일 때는 AX focused 창의 ID·제목·위치·크기로 snapshot을 직접 만들고 CoreGraphics는 AX 실패 시에만 사용한다. 설정창이 앞으로 온 경우 마지막 외부 snapshot은 polling에만 유지하며, 최소화 직전에는 캐시 없이 fresh 조회를 계속 요구한다.
+- 반복 실패의 근본 원인은 Tauri가 만든 ad-hoc 서명의 designated requirement가 빌드별 `CDHash`였던 점이다. 재빌드할 때마다 macOS TCC가 앱을 다른 실행본으로 보아 기존 손쉬운 사용 허용이 적용되지 않았고, monitor가 `AccessDenied`를 삼켜 전경 창 없음으로 표시했다.
+- `npm run bundle:mac`은 release build 뒤 앱을 `identifier "com.migam.desktop.mac"` 고정 designated requirement로 로컬 ad-hoc 재서명하고 DMG를 다시 만든다. 권한 거부는 `accessibilityDenied` 감지 상태로 보존되어 설정 화면에 정확히 표시된다.
 - Kick 웹뷰의 위치 이동이나 이벤트 처리가 실패해도 Rust가 1.2초 뒤 pending 개입을 다시 fresh 검증하고 완료한다. 설정 화면은 `minimized`, 권한 거부, 대상 변경, 검사 실패 결과를 비민감 문구로 표시한다.
 - 집중 보호 설정 저장은 권한 프롬프트를 다시 호출하지 않고 현재 권한 상태만 조회한다. 권한 요청은 사용자가 `권한 설정` 버튼을 누를 때만 실행한다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
 - `npm run build`: Vite production build 통과.
-- Rust 1.98 stable을 설치했고 현재 `cargo test` 51개, rustfmt, Clippy `-D warnings`가 통과했다.
-- `npm run tauri -- build --no-bundle`과 전체 bundle build가 통과했다.
+- Rust 1.98 stable을 설치했고 현재 `cargo test` 52개, rustfmt, Clippy `-D warnings`가 통과했다.
+- `npm run bundle:mac`과 codesign strict·DMG checksum 검증이 통과했다.
 - `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg`를 생성했고 번들 앱 프로세스 실행을 확인했다.
 
 ## 최근 투두리스트·뽀모도로 작업 요약
@@ -167,6 +169,20 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 
 ## 이번 세션 변경 파일
 
+이번 macOS 권한 식별자 수정:
+
+- `README.md`
+- `package.json`
+- `scripts/sign-macos-local.sh`
+- `src/contracts.ts`
+- `src/main.ts`
+- `src-tauri/src/application/foreground_monitor.rs`
+- `src-tauri/src/infrastructure/macos/foreground_window.rs`
+- `docs/13-progress-board.md`
+- `docs/17-session-handoff.md`
+
+이전 누적 작업 기록:
+
 - `src/gamcha/gamcha-model.ts`
 - `src/gamcha/gamcha-model.test.ts`
 - `src/gamcha/gamcha-view.ts`
@@ -291,7 +307,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - macOS 화면 기록 권한이 없으면 다른 앱의 창 제목이 비어 제목 기반 규칙이 매치되지 않을 수 있다. 프로세스 이름 규칙은 계속 사용할 수 있다.
 - macOS 손쉬운 사용 권한이 없으면 방해 창 최소화는 안전하게 실패한다. 개입은 기본 off다.
 - 번들 앱은 Apple Developer ID 서명·공증을 아직 하지 않은 개발 산출물이다.
-- 현재 ad-hoc 서명은 지정 요구사항이 빌드별 `CDHash`라 앱을 새로 빌드하면 macOS 손쉬운 사용 권한을 한 번 다시 허용해야 한다. 설정 저장만으로는 더 이상 권한 요청을 띄우지 않는다.
+- 새 고정 designated requirement로 전환한 이번 빌드에는 손쉬운 사용 목록의 이전 항목을 제거하고 현재 `.app`을 최초 1회 다시 추가해야 한다. 이후 `npm run bundle:mac` 산출물은 같은 로컬 권한 식별자를 유지한다.
 - 투명 WKWebView를 위해 Tauri `macOSPrivateApi`를 사용하므로 Mac App Store에는 배포할 수 없다. GitHub DMG 직접 배포 경로를 유지한다.
 - 자동 화면 캡처는 화면 기록 권한 부재로 실패했다. 투명 펫 창, always-on-top, 메뉴 막대 아이콘과 각 유틸리티 창은 사용자 화면에서 확인해야 한다.
 - 일반 사용자 데스크톱에서 감자봇 외 배경이 완전히 투명한지 확인해야 한다.
@@ -310,8 +326,8 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 ## 다음 작업
 
 1. 펫 우클릭 `사진 배달 테스트`에서 사진과 canvas 감자펫이 함께 진입하는지 확인한다.
-2. 설정의 `권한 설정`에서 화면 기록·손쉬운 사용을 허용하고 필요하면 앱을 재시작한다.
-3. 현재 `NAVER Whale` + `YouTube` 규칙으로 Focus를 시작해 감지 표시, 5초 유예, Kick, `방해 창 최소화 완료` 상태와 실제 최소화를 확인한다.
+2. 손쉬운 사용 목록에서 이전 `Desktop Migam Mac` 항목을 제거하고 현재 bundle의 `.app`을 추가·허용한 뒤 앱을 재시작한다.
+3. 현재 Safari + `YouTube` 규칙으로 Focus를 시작해 감지 표시, 5초 유예, Kick, `방해 창 최소화 완료` 상태와 실제 최소화를 확인한다.
 4. 대상 변경과 `Cmd+Shift+F12`에서 pending 개입이 취소되는지 확인한다.
 5. 단일 Retina와 가능하면 보조 모니터에서 걷기·드래그·던지기·작업 영역 경계를 확인한다.
 

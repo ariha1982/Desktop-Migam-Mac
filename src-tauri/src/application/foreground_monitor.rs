@@ -12,6 +12,7 @@ use crate::domain::{
 pub enum DetectionReason {
     #[default]
     Inactive,
+    AccessibilityDenied,
     WindowUnavailable,
     Protected,
     FullscreenProtected,
@@ -115,13 +116,16 @@ impl ForegroundMonitor {
         settings: &FocusGuardSettings,
     ) -> Result<Vec<ForegroundEffect>, String> {
         let active = focus_running && !emergency_stopped && settings.intervention_enabled;
-        let snapshot = if active {
-            self.source
+        let (snapshot, read_error) = if active {
+            match self
+                .source
                 .monitored_foreground_window_excluding(self.application_process_id)
-                .ok()
-                .flatten()
+            {
+                Ok(snapshot) => (snapshot, None),
+                Err(error) => (None, Some(error)),
+            }
         } else {
-            None
+            (None, None)
         };
         let matched = snapshot.as_ref().and_then(|snapshot| {
             if self.is_protected(snapshot) {
@@ -137,6 +141,8 @@ impl ForegroundMonitor {
         });
         let reason = if !active {
             DetectionReason::Inactive
+        } else if read_error == Some(ForegroundReadError::AccessDenied) {
+            DetectionReason::AccessibilityDenied
         } else if snapshot.is_none() {
             DetectionReason::WindowUnavailable
         } else if snapshot
@@ -493,6 +499,30 @@ mod tests {
         };
         assert_eq!(detection.reason, DetectionReason::TitleUnavailable);
         assert!(!detection.matched);
+    }
+
+    #[test]
+    fn reports_accessibility_denial_instead_of_a_missing_window() {
+        struct DeniedSource;
+
+        impl ForegroundWindowSource for DeniedSource {
+            fn foreground_window(&self) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+                Err(ForegroundReadError::AccessDenied)
+            }
+        }
+
+        let monitor = ForegroundMonitor::new(
+            Box::new(DeniedSource),
+            Box::new(FakeMinimizer(Arc::new(AtomicUsize::new(0)))),
+            999,
+        );
+        let effects = monitor
+            .poll(Instant::now(), true, false, &settings())
+            .unwrap();
+        let ForegroundEffect::Detection(detection) = &effects[0] else {
+            panic!("expected a detection update");
+        };
+        assert_eq!(detection.reason, DetectionReason::AccessibilityDenied);
     }
 
     #[test]

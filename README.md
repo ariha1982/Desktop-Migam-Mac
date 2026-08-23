@@ -36,9 +36,9 @@ cargo fmt -- --check
 cargo clippy --all-targets -- -D warnings
 cd ..
 
-npm run tauri -- build
+npm run bundle:mac
 ```
 
-Apple Silicon 산출물은 `src-tauri/target/release/bundle/macos/Desktop Migam Mac.app`과 `src-tauri/target/release/bundle/dmg/Desktop Migam Mac_0.1.0_aarch64.dmg`에 생성됩니다. 현재 개발 빌드는 서명·공증되지 않았습니다.
+Apple Silicon 산출물은 `src-tauri/target/release/bundle/macos/Desktop Migam Mac.app`과 `src-tauri/target/release/bundle/dmg/Desktop Migam Mac_0.1.0_aarch64.dmg`에 생성됩니다. `bundle:mac`은 로컬 권한이 빌드마다 풀리지 않도록 고정 bundle identifier 요구사항으로 ad-hoc 서명한 뒤 DMG를 다시 만듭니다. 이는 로컬 개발용이며 Developer ID 서명·공증을 대신하지 않습니다.
 
 프로젝트 구조와 상세 기록은 [개발 문서 색인](docs/README.md), [진행 현황판](docs/13-progress-board.md), [세션 인수인계](docs/17-session-handoff.md)를 참고하세요. 기존 Windows 설계 문서는 원본 구현의 역사 자료로 유지합니다.

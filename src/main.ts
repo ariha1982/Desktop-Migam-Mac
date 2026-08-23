@@ -273,6 +273,7 @@ function renderSettings(
     const rule = rules.find((candidate) => candidate.id === detection.ruleId);
     const labels: Record<DetectionState["reason"], string> = {
       inactive: "감지 대기 · 집중 타이머를 시작하세요",
+      accessibilityDenied: "현재 실행본에 손쉬운 사용 권한이 적용되지 않았습니다",
       windowUnavailable: "전경 창을 읽지 못했습니다",
       protected: "개입 제외 · 시스템 또는 앱 자체 창",
       fullscreenProtected: "개입 제외 · 전체 화면 창",

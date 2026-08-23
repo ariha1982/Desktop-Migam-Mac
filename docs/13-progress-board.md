@@ -34,6 +34,9 @@
 
 ## 오늘 완료
 
+- [x] 빌드마다 바뀌는 ad-hoc `CDHash`가 손쉬운 사용 권한을 무효화하던 근본 원인 확인
+- [x] `com.migam.desktop.mac` 고정 designated requirement로 앱을 재서명하고 DMG를 다시 만드는 `npm run bundle:mac` 추가
+- [x] 전경 창 조회에서 `AccessDenied`를 삼키지 않고 설정 화면에 현재 실행본의 권한 미적용 상태를 별도로 표시
 - [x] Kick 창이 macOS 전면 앱을 순간 점유해도 그 아래의 최상위 외부 창을 fresh 재검증하도록 수정
 - [x] `AXFocusedWindow` 실패 시 `AXWindows`에서 동일 geometry 창을 찾는 안전한 최소화 fallback 추가
 - [x] Kick 웹뷰 이동 실패와 무관하게 1.2초 뒤 Rust가 재검증·최소화를 완료하는 fallback 추가
@@ -177,7 +180,7 @@
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
 | BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
-| BUG-004 | S1 | macOS 집중 보호가 권한 누락, CG 창/제목 누락, 자체 설정창 전면 점유, Kick 오버레이와 AX/CG frame 불일치로 동작하지 않음 | Safari/Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — AX-only focused snapshot, polling 전용 외부창 cache, fresh 완료 검증, AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 빌드마다 바뀌는 ad-hoc `CDHash`로 권한을 잃고, 조회 오류가 전경 창 없음으로 숨겨짐 | Safari/Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 고정 designated requirement 서명, 명시적 `AccessDenied`, AX-only snapshot과 fresh 완료 검증 적용; 새 식별자에 최초 1회 권한 연결 후 사용자 재검증 대기 |
 | BUG-005 | S2 | 집중 보호 설정 저장 시 권한 요청 API를 다시 호출해 손쉬운 사용 프롬프트가 반복됨 | 집중 보호를 켜고 설정 저장 | Codex | 수정 완료 — 저장 후 비대화형 권한 조회만 실행, 요청은 `권한 설정` 버튼으로 제한 |
 
 심각도:
@@ -294,6 +297,8 @@
 | 2026-08-24 | 자체 창 제외 polling 수정 후 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성 |
 | 2026-08-24 | AX-only 전경 snapshot 수정 후 자동 검사 | 통과 | Safari AX ID·제목·위치·크기 직접 snapshot과 polling 전용 cache 추가, 프런트 25개·Rust 51개 테스트, typecheck, rustfmt, Clippy 통과 |
 | 2026-08-24 | AX-only 전경 snapshot 수정 후 bundle build | 통과 | Vite production build와 수정된 `.app`·Apple Silicon DMG 재생성 |
+| 2026-08-24 | 고정 권한 식별자 수정 후 전체 자동 검사 | 통과 | 프런트 25개·Rust 52개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
+| 2026-08-24 | `npm run bundle:mac` 및 산출물 검증 | 통과 | designated requirement `identifier "com.migam.desktop.mac"`, codesign strict 검증, DMG checksum 검증 통과 |
 
 ## 시간 예산
 
@@ -309,10 +314,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 집중 보호는 Safari 전경 시 AX-only snapshot을 만들고 설정창 전경 시 polling 전용 외부창 cache를 사용하며 완료 시 fresh 재검증함
-마지막 성공 검사: 2026-08-24 프런트 25개·Rust 51개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics/Accessibility 전면 창 감지, `CGWindowID` 기반 최소화, 비민감 감지 실패 사유, 사용자 버튼 전용 권한 요청, 개입 결과 UI, Rust fallback, 사진 배달 canvas
-다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 `방해 창 최소화 완료` 상태와 실제 최소화를 수동 확인
-알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
-실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
+현재 상태: macOS 집중 보호는 AX-only snapshot과 fresh 재검증을 사용하며, 로컬 번들은 고정 designated requirement로 서명되어 재빌드 시 손쉬운 사용 권한 식별자가 유지됨
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 52개 테스트, typecheck, Vite build, rustfmt, Clippy, codesign strict, DMG checksum 통과
+완료한 기능: AppKit/CoreGraphics/Accessibility 전면 창 감지, `CGWindowID` 기반 최소화, 명시적 권한 거부 상태, 고정 로컬 서명, 개입 결과 UI, Rust fallback, 사진 배달 canvas
+다음으로 할 일: 고정 식별자로 새로 만든 앱에 손쉬운 사용 권한을 최초 1회 연결하고 Safari/YouTube 감지·최소화를 수동 확인
+알려진 위험: 새 고정 식별자로 전환했으므로 이번 빌드에는 최초 1회 권한 재연결이 필요함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; Developer ID 서명·공증은 아직 없음
+실행/테스트 방법: `npm run bundle:mac` 후 생성된 `.app` 실행
 ```

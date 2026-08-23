@@ -99,6 +99,9 @@ pub fn focus_guard_permissions(request: bool) -> (bool, bool) {
 
 impl ForegroundWindowSource for PlatformForegroundWindowSource {
     fn foreground_window(&self) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+        if unsafe { AXIsProcessTrusted() } == 0 {
+            return Err(ForegroundReadError::AccessDenied);
+        }
         let workspace = NSWorkspace::sharedWorkspace();
         let Some(application) = workspace.frontmostApplication() else {
             return Ok(None);
@@ -181,6 +184,9 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
         &self,
         excluded_process_id: u32,
     ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+        if unsafe { AXIsProcessTrusted() } == 0 {
+            return Err(ForegroundReadError::AccessDenied);
+        }
         let own_app_is_frontmost = NSWorkspace::sharedWorkspace()
             .frontmostApplication()
             .is_some_and(|application| {
@@ -589,7 +595,10 @@ mod tests {
     #[test]
     fn foreground_snapshot_is_safe_to_query() {
         let result = PlatformForegroundWindowSource::new().foreground_window();
-        assert!(result.is_ok());
+        assert!(matches!(
+            result,
+            Ok(_) | Err(ForegroundReadError::AccessDenied)
+        ));
     }
 
     #[test]

@@ -13,6 +13,7 @@ export interface DetectionState {
   ruleId?: string;
   reason:
     | "inactive"
+    | "accessibilityDenied"
     | "windowUnavailable"
     | "protected"
     | "fullscreenProtected"
