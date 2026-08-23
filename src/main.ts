@@ -5,6 +5,7 @@ import type {
   BootstrapState,
   DetectionState,
   DistractionRule,
+  FocusGuardPermissionState,
   Settings,
   SystemMetricsState,
   ResourceResponseMode,
@@ -209,6 +210,10 @@ function renderSettings(
           <legend>집중 보호</legend>
           <label class="checkbox-row"><input name="interventionEnabled" type="checkbox" ${settings.focusGuard.interventionEnabled ? "checked" : ""} ${rules.length === 0 ? "disabled" : ""} /> 집중 중 규칙 일치 감지 사용</label>
           <p class="muted">일치 상태가 유예 시간 동안 유지되면 왼쪽에서 네모 캐릭터가 날아와 창을 최소화합니다. 브라우저 사이트는 창 제목 문자열만 확인합니다.</p>
+          <div class="focus-permission-row">
+            <p id="focus-permission-status" class="detection-status" role="status">macOS 권한 확인 중</p>
+            <button id="request-focus-permissions" class="secondary" type="button">권한 설정</button>
+          </div>
           <p id="detection-status" class="detection-status" role="status">집중 시작 전 · 감지 대기</p>
         </fieldset>
         <section class="rules-section" aria-labelledby="rules-heading">
@@ -247,6 +252,8 @@ function renderSettings(
     redrawRules();
   });
   const detectionStatus = document.querySelector<HTMLParagraphElement>("#detection-status");
+  const permissionStatus = document.querySelector<HTMLParagraphElement>("#focus-permission-status");
+  const permissionButton = document.querySelector<HTMLButtonElement>("#request-focus-permissions");
   const resourceStatus = document.querySelector<HTMLParagraphElement>("#resource-status");
   const updateResourceStatus = (): void => {
     void invoke<SystemMetricsState>("get_system_metrics").then((metrics) => {
@@ -268,6 +275,25 @@ function renderSettings(
       : "일치하는 전경 창 없음";
     detectionStatus.classList.toggle("matched", detection.matched);
   };
+  const showPermissions = (permissions: FocusGuardPermissionState): void => {
+    if (!permissionStatus) return;
+    const missing = [
+      permissions.screenRecordingGranted ? undefined : "화면 기록",
+      permissions.accessibilityGranted ? undefined : "손쉬운 사용",
+    ].filter((value): value is string => Boolean(value));
+    permissionStatus.textContent = missing.length === 0
+      ? "집중 보호 권한 준비됨"
+      : `권한 필요 · ${missing.join(" · ")}`;
+    permissionStatus.classList.toggle("matched", missing.length === 0);
+  };
+  const refreshPermissions = (request = false): void => {
+    const command = request ? "request_focus_guard_permissions" : "get_focus_guard_permissions";
+    void invoke<FocusGuardPermissionState>(command).then(showPermissions).catch(() => {
+      if (permissionStatus) permissionStatus.textContent = "macOS 권한 상태를 확인하지 못했습니다";
+    });
+  };
+  refreshPermissions();
+  permissionButton?.addEventListener("click", () => refreshPermissions(true));
   void invoke<DetectionState>("get_detection_state").then(showDetection).catch(() => undefined);
   void listen<DetectionState>("focus://detection", (event) => showDetection(event.payload)).then(
     (unlisten) => window.addEventListener("pagehide", unlisten, { once: true }),
@@ -295,6 +321,7 @@ function renderSettings(
     };
     try {
       settings = await invoke<Settings>("save_settings", { settings: next });
+      if (settings.focusGuard.interventionEnabled) refreshPermissions(true);
       if (status) status.textContent = "저장했습니다.";
     } catch {
       if (status) status.textContent = "저장하지 못했습니다. 입력값을 확인해 주세요.";

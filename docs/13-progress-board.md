@@ -19,7 +19,7 @@
 | 8. 긴급 중지 | 진행 중 | 2026-08-24 |  | Codex | macOS `Cmd+Shift+F12` 등록 구현과 컴파일 완료; 실제 키 입력 확인 필요 |
 | 9. P1 선택 기능 | 진행 중 | 2026-08-23 |  | Codex | GAMCHA 티켓·룰렛·컬렉션 구현, 코스튬 착용과 Windows 수동 확인 대기 |
 | 10. 투두·뽀모도로 연동 | 진행 중 | 2026-08-23 |  | Codex | 핵심 MVP·자동 검사 완료, Windows 수동 검증과 고급 축하 설정 대기 |
-| A. 사진 배달 연출 | 완료 | 2026-08-23 | 2026-08-23 | Codex | 4장 무작위 선택, Desktop Goose식 힘겨운 당김, 화면 전체 무작위 배치, 사용자 X 닫기 |
+| A. 사진 배달 연출 | 진행 중 | 2026-08-23 |  | Codex | macOS WebKit용 canvas 스프라이트 수정 완료, 사용자 화면 재검증 대기 |
 | 11. 최종 검증 | 대기 |  |  |  |  |
 
 상태 값: `대기`, `진행 중`, `차단`, `완료`, `제외`
@@ -34,6 +34,10 @@
 
 ## 오늘 완료
 
+- [x] 사진 배달 감자펫을 WebKit `blob:` CSS 배경 대신 투명화 canvas 프레임으로 직접 렌더링
+- [x] 집중 보호 화면 기록·손쉬운 사용 권한 상태 조회와 요청 버튼 추가
+- [x] `NAVER Whale`/`Whale`, Windows/macOS Chrome·Edge 실행 이름을 안전한 알려진 별칭으로 정규화
+- [x] AX/CG 창 프레임 차이를 허용하되 전경 창 ID·PID fresh 재검증 유지
 - [x] macOS WKWebView 투명 배경에 필요한 `macOSPrivateApi`와 창별 alpha 0 배경색을 적용해 흰 사각 창 수정
 - [x] Xcode가 설치된 Apple Silicon Mac에 Rust 1.98 stable 툴체인 구성
 - [x] AppKit·CoreGraphics 기반 전면 앱/창 이름·제목·좌표·전체 화면 감지 구현
@@ -168,6 +172,8 @@
 |---|---|---|---|---|---|
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
+| BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 권한 누락과 `NAVER Whale`/`Whale` 이름 차이로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 수정 완료 — 권한 UI·브라우저 별칭·AX 허용 오차 적용, 사용자 재검증 대기 |
 
 심각도:
 
@@ -269,6 +275,8 @@
 | 2026-08-24 | macOS 번들 앱 실행 | 부분 통과 | PID 38958로 프로세스 유지 확인; 화면 캡처 권한 부재로 투명 창 육안 자동 검증 불가 |
 | 2026-08-24 | macOS 투명 창 수정 후 프런트 검사 | 통과 | 프런트 25개 테스트와 TypeScript typecheck 통과 |
 | 2026-08-24 | macOS 투명 창 수정 후 Tauri build | 통과 | `macos-private-api` 적용 상태로 release 실행 파일, `.app`, Apple Silicon DMG 재생성 |
+| 2026-08-24 | 사진 배달·집중 보호 수정 후 자동 검사 | 통과 | 프런트 25개, Rust 47개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
+| 2026-08-24 | 사진 배달·집중 보호 수정 후 전체 bundle build | 통과 | 수정된 `.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg` 생성 |
 
 ## 시간 예산
 
@@ -284,10 +292,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 네이티브 기능과 WKWebView 투명 창 수정, Apple Silicon 배포 번들 생성 완료
-마지막 성공 검사: 2026-08-24 프런트 25개 테스트, typecheck, Tauri release 실행 파일·`.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, sysinfo CPU/MEM, Cmd+Shift+F12, ICNS, macOS 투명 창, 앱/DMG 번들
-다음으로 할 일: 일반 사용자 화면에서 투명도·메뉴 막대·창 열기·드래그/던지기와 권한 부여 전후 방해 창 감지·최소화를 수동 확인
+현재 상태: macOS 사진 배달 canvas 렌더링과 집중 보호 권한·브라우저 별칭 수정, Apple Silicon 배포 번들 생성 완료
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 47개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, 집중 보호 권한 UI, 브라우저 이름 정규화, 사진 배달 canvas, 앱/DMG 번들
+다음으로 할 일: 새 앱에서 사진 배달 감자펫 표시와 권한 허용 후 Whale/YouTube 감지·Kick·최소화를 수동 확인
 알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
 실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
 ```

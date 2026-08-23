@@ -68,15 +68,20 @@ body[data-window="photo-delivery"] #app {
   pointer-events: auto;
 }
 .photo-delivery-pet {
+  position: relative;
   z-index: 2;
   width: 150px;
   height: 200px;
   flex: 0 0 150px;
   margin-right: -27px;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  background-size: 600px 200px;
+  overflow: hidden;
   transform-origin: 70% 90%;
+}
+.photo-delivery-pet canvas {
+  display: block;
+  width: 600px;
+  height: 200px;
+  max-width: none;
 }
 .photo-delivery-rig.from-right .photo-delivery-pet { order: 0; }
 .photo-delivery-rig.from-right .photo-delivery-card { order: 1; }
@@ -88,12 +93,13 @@ body[data-window="photo-delivery"] #app {
   transform: scaleX(-1);
 }
 .photo-delivery-rig.delivering .photo-delivery-pet {
-  animation: photo-delivery-pull-frames 900ms steps(4, end) infinite,
-    photo-delivery-strain 900ms ease-in-out infinite;
+  animation: photo-delivery-strain 900ms ease-in-out infinite;
 }
 .photo-delivery-rig.delivering.from-left .photo-delivery-pet {
-  animation: photo-delivery-pull-frames 900ms steps(4, end) infinite,
-    photo-delivery-strain-left 900ms ease-in-out infinite;
+  animation: photo-delivery-strain-left 900ms ease-in-out infinite;
+}
+.photo-delivery-rig.delivering .photo-delivery-pet canvas {
+  animation: photo-delivery-pull-frames 900ms steps(4, end) infinite;
 }
 .photo-delivery-rig.delivering .photo-delivery-card {
   animation: photo-delivery-load-rattle 900ms ease-in-out infinite;
@@ -143,7 +149,7 @@ body[data-window="photo-delivery"] #app {
   filter: none;
 }
 @keyframes photo-delivery-pull-frames {
-  to { background-position-x: -600px; }
+  to { transform: translateX(-600px); }
 }
 @keyframes photo-delivery-strain {
   0%, 100% { transform: rotate(-2deg) translateY(0); }
@@ -319,6 +325,8 @@ body[data-window="settings"] .danger-text { border-color: transparent; backgroun
 body[data-window="settings"] .empty-rules { padding: 15px; border: 1px dashed #9ca1aa; border-radius: 0; background: #fafafa; font: 12px Consolas, monospace; }
 body[data-window="settings"] .detection-status { padding: 7px 9px; border: 1px solid #b9bdc5; border-radius: 0; background: #eceef2; color: #3e4248; font: 600 11px Consolas, monospace; }
 body[data-window="settings"] .detection-status.matched { border-color: #6ea86e; background: #e7f4e7; color: #145c20; }
+.focus-permission-row { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
+.focus-permission-row .detection-status { grid-column: auto; display: grid; align-items: center; }
 body[data-window="settings"] .actions { min-height: 36px; padding: 6px 0; border-top: 1px solid #c5c8ce; }
 body[data-window="settings"] #save-status { font: 11px Consolas, monospace; }
 

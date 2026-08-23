@@ -13,6 +13,11 @@ export interface DetectionState {
   ruleId?: string;
 }
 
+export interface FocusGuardPermissionState {
+  accessibilityGranted: boolean;
+  screenRecordingGranted: boolean;
+}
+
 export interface InterventionRequest {
   interventionId: number;
   startX: number;

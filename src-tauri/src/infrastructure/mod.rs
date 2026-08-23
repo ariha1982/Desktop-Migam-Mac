@@ -5,8 +5,8 @@ mod windows;
 
 #[cfg(target_os = "macos")]
 pub use macos::{
-    PlatformForegroundWindowSource, PlatformWindowMinimizer, SystemMetricsMonitor,
-    SystemMetricsSnapshot,
+    focus_guard_permissions, PlatformForegroundWindowSource, PlatformWindowMinimizer,
+    SystemMetricsMonitor, SystemMetricsSnapshot,
 };
 #[cfg(windows)]
 pub use windows::{

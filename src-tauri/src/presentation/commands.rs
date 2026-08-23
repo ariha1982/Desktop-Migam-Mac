@@ -17,6 +17,9 @@ use crate::{
     },
 };
 
+#[cfg(target_os = "macos")]
+use crate::infrastructure::focus_guard_permissions;
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BootstrapState {
@@ -24,6 +27,34 @@ pub struct BootstrapState {
     emergency_stopped: bool,
     emergency_shortcut_available: bool,
     tray_available: bool,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FocusGuardPermissionState {
+    accessibility_granted: bool,
+    screen_recording_granted: bool,
+}
+
+fn read_focus_guard_permissions(request: bool) -> FocusGuardPermissionState {
+    #[cfg(target_os = "macos")]
+    let (accessibility_granted, screen_recording_granted) = focus_guard_permissions(request);
+    #[cfg(not(target_os = "macos"))]
+    let (accessibility_granted, screen_recording_granted) = (true, true);
+    FocusGuardPermissionState {
+        accessibility_granted,
+        screen_recording_granted,
+    }
+}
+
+#[tauri::command]
+pub fn get_focus_guard_permissions() -> FocusGuardPermissionState {
+    read_focus_guard_permissions(false)
+}
+
+#[tauri::command]
+pub fn request_focus_guard_permissions() -> FocusGuardPermissionState {
+    read_focus_guard_permissions(true)
 }
 
 #[tauri::command]

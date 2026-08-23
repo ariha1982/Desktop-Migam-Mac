@@ -4,7 +4,7 @@ use core_foundation::{
     array::CFArray,
     base::{CFType, CFTypeRef, TCFType},
     boolean::CFBoolean,
-    dictionary::CFDictionary,
+    dictionary::{CFDictionary, CFDictionaryRef},
     number::CFNumber,
     string::{CFString, CFStringRef},
     ConcreteCFType,
@@ -34,6 +34,7 @@ const AX_VALUE_CG_SIZE: i32 = 2;
 #[link(name = "ApplicationServices", kind = "framework")]
 unsafe extern "C" {
     fn AXIsProcessTrusted() -> u8;
+    fn AXIsProcessTrustedWithOptions(options: CFDictionaryRef) -> u8;
     fn AXUIElementCreateApplication(process_id: libc::pid_t) -> AXUIElementRef;
     fn AXUIElementCopyAttributeValue(
         element: AXUIElementRef,
@@ -48,6 +49,12 @@ unsafe extern "C" {
     fn AXValueGetValue(value: AXValueRef, value_type: i32, output: *mut c_void) -> u8;
 }
 
+#[link(name = "CoreGraphics", kind = "framework")]
+unsafe extern "C" {
+    fn CGPreflightScreenCaptureAccess() -> bool;
+    fn CGRequestScreenCaptureAccess() -> bool;
+}
+
 #[derive(Default)]
 pub struct PlatformForegroundWindowSource;
 
@@ -58,6 +65,21 @@ impl PlatformForegroundWindowSource {
     pub const fn new() -> Self {
         Self
     }
+}
+
+pub fn focus_guard_permissions(request: bool) -> (bool, bool) {
+    if request && unsafe { AXIsProcessTrusted() } == 0 {
+        let key = CFString::from_static_string("AXTrustedCheckOptionPrompt");
+        let prompt = CFBoolean::true_value();
+        let options = CFDictionary::from_CFType_pairs(&[(key, prompt)]);
+        unsafe { AXIsProcessTrustedWithOptions(options.as_concrete_TypeRef()) };
+    }
+    if request && !unsafe { CGPreflightScreenCaptureAccess() } {
+        unsafe { CGRequestScreenCaptureAccess() };
+    }
+    (unsafe { AXIsProcessTrusted() } != 0, unsafe {
+        CGPreflightScreenCaptureAccess()
+    })
 }
 
 impl ForegroundWindowSource for PlatformForegroundWindowSource {
@@ -285,7 +307,7 @@ fn copy_ax_value<T: Default>(
 }
 
 fn geometry_value_matches(left: f64, right: f64) -> bool {
-    (left - right).abs() <= 2.0
+    (left - right).abs() <= 8.0
 }
 
 #[cfg(test)]
@@ -306,7 +328,7 @@ mod tests {
 
     #[test]
     fn intervention_geometry_requires_a_tight_match() {
-        assert!(geometry_value_matches(100.0, 101.9));
-        assert!(!geometry_value_matches(100.0, 102.1));
+        assert!(geometry_value_matches(100.0, 107.9));
+        assert!(!geometry_value_matches(100.0, 108.1));
     }
 }

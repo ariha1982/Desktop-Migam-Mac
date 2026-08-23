@@ -39,7 +39,7 @@ function isLightBackground(data: Uint8ClampedArray, pixel: number): boolean {
   return minimum >= 218 && maximum - minimum <= 34;
 }
 
-async function transparentPullStrip(): Promise<string> {
+async function drawTransparentPullStrip(target: HTMLCanvasElement): Promise<void> {
   const source = await loadImage(pullStripUrl);
   const canvas = document.createElement("canvas");
   canvas.width = source.naturalWidth;
@@ -79,11 +79,10 @@ async function transparentPullStrip(): Promise<string> {
     if (y + 1 < canvas.height) add(pixel + canvas.width);
   }
   context.putImageData(image, 0, 0);
-
-  const blob = await new Promise<Blob>((resolve, reject) =>
-    canvas.toBlob((result) => result ? resolve(result) : reject(new Error("sprite conversion failed")), "image/png"),
-  );
-  return URL.createObjectURL(blob);
+  const targetContext = target.getContext("2d");
+  if (!targetContext) throw new Error("sprite canvas is unavailable");
+  targetContext.clearRect(0, 0, target.width, target.height);
+  targetContext.drawImage(canvas, 0, 0, target.width, target.height);
 }
 
 export function startPhotoDeliveryScheduler(): () => void {
@@ -108,7 +107,7 @@ export async function mountPhotoDelivery(container: HTMLElement): Promise<() => 
   container.innerHTML = `
     <main class="photo-delivery-stage" aria-live="polite">
       <section class="photo-delivery-rig" aria-label="감자펫의 사진 배달">
-        <div class="photo-delivery-pet" aria-hidden="true"></div>
+        <div class="photo-delivery-pet" aria-hidden="true"><canvas width="600" height="200"></canvas></div>
         <figure class="photo-delivery-card">
           <img alt="감자펫이 가져온 사진" />
           <button type="button" aria-label="사진 닫기">×</button>
@@ -117,9 +116,10 @@ export async function mountPhotoDelivery(container: HTMLElement): Promise<() => 
     </main>`;
   const rig = container.querySelector<HTMLElement>(".photo-delivery-rig")!;
   const pet = container.querySelector<HTMLElement>(".photo-delivery-pet")!;
+  const petFrames = pet.querySelector<HTMLCanvasElement>("canvas")!;
   const photo = container.querySelector<HTMLImageElement>(".photo-delivery-card img")!;
   const close = container.querySelector<HTMLButtonElement>(".photo-delivery-card button")!;
-  const spriteUrlPromise = transparentPullStrip();
+  const spriteReadyPromise = drawTransparentPullStrip(petFrames);
   let phase: "idle" | "delivering" | "leaving" | "settled" = "idle";
   let leaveTimer = 0;
   let route: Animation | null = null;
@@ -173,9 +173,8 @@ export async function mountPhotoDelivery(container: HTMLElement): Promise<() => 
     phase = "delivering";
     const selectedPhoto = photoUrls[Math.floor(Math.random() * photoUrls.length)];
     photo.src = selectedPhoto;
-    void Promise.all([spriteUrlPromise, photo.decode()]).then(([spriteUrl]) => {
+    void Promise.all([spriteReadyPromise, photo.decode()]).then(() => {
       if (phase !== "delivering") return;
-      pet.style.backgroundImage = `url("${spriteUrl}")`;
       const maximumWidth = Math.min(520, window.innerWidth * 0.52);
       const maximumHeight = Math.min(420, window.innerHeight * 0.58);
       const scale = Math.min(maximumWidth / photo.naturalWidth, maximumHeight / photo.naturalHeight);
@@ -220,7 +219,7 @@ export async function mountPhotoDelivery(container: HTMLElement): Promise<() => 
   const unlistenReset = await listen("photo://reset", reset);
   const unlistenEmergency = await listen("app://emergency-stopped", reset);
   close.addEventListener("click", finish);
-  const spriteUrl = await spriteUrlPromise.catch(() => "");
+  await spriteReadyPromise.catch(() => undefined);
   return () => {
     window.clearTimeout(leaveTimer);
     close.removeEventListener("click", finish);
@@ -228,6 +227,5 @@ export async function mountPhotoDelivery(container: HTMLElement): Promise<() => 
     unlistenSettled();
     unlistenReset();
     unlistenEmergency();
-    if (spriteUrl) URL.revokeObjectURL(spriteUrl);
   };
 }

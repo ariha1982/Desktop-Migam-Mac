@@ -139,6 +139,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             presentation::commands::get_bootstrap_state,
+            presentation::commands::get_focus_guard_permissions,
+            presentation::commands::request_focus_guard_permissions,
             presentation::commands::save_settings,
             presentation::commands::get_timer_state,
             presentation::commands::get_detection_state,

@@ -69,9 +69,9 @@ impl DistractionRule {
             return false;
         }
 
-        let process_matches = self
-            .process_condition()
-            .is_none_or(|expected| expected.eq_ignore_ascii_case(process_name));
+        let process_matches = self.process_condition().is_none_or(|expected| {
+            canonical_process_name(expected) == canonical_process_name(process_name)
+        });
         let title_matches = self.title_condition().is_none_or(|expected| {
             window_title
                 .to_lowercase()
@@ -91,6 +91,17 @@ impl DistractionRule {
 
     fn populated(value: Option<&str>) -> Option<&str> {
         value.map(str::trim).filter(|value| !value.is_empty())
+    }
+}
+
+fn canonical_process_name(value: &str) -> String {
+    let normalized = value.trim().to_lowercase();
+    match normalized.as_str() {
+        "chrome" | "chrome.exe" | "google chrome" => "google chrome".to_owned(),
+        "msedge" | "msedge.exe" | "microsoft edge" => "microsoft edge".to_owned(),
+        "naver whale" | "whale" | "whale.exe" => "whale".to_owned(),
+        "firefox" | "firefox.exe" => "firefox".to_owned(),
+        _ => normalized,
     }
 }
 #[cfg(test)]
@@ -115,6 +126,13 @@ mod tests {
 
         assert!(rule.matches("chrome.exe", "Any title"));
         assert!(!rule.matches("my-chrome.exe", "Any title"));
+    }
+
+    #[test]
+    fn migrated_browser_process_names_match_macos_app_names() {
+        assert!(rule(Some("Chrome.EXE"), None).matches("Google Chrome", "Any title"));
+        assert!(rule(Some("NAVER Whale"), None).matches("Whale", "Any title"));
+        assert!(rule(Some("msedge.exe"), None).matches("Microsoft Edge", "Any title"));
     }
 
     #[test]
