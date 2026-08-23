@@ -335,7 +335,7 @@ function renderSettings(
     };
     try {
       settings = await invoke<Settings>("save_settings", { settings: next });
-      if (settings.focusGuard.interventionEnabled) refreshPermissions(true);
+      if (settings.focusGuard.interventionEnabled) refreshPermissions();
       if (status) status.textContent = "저장했습니다.";
     } catch {
       if (status) status.textContent = "저장하지 못했습니다. 입력값을 확인해 주세요.";

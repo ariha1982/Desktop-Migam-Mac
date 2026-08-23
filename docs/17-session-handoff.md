@@ -23,6 +23,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - 개입 직전 전경 window ID·PID·규칙 일치 재검증을 유지한다. Kick 창이 전면 앱을 점유할 때는 그 아래 최상위 외부 창을 재검증한다.
 - 후속 사용자 검증에서 Whale의 CoreGraphics frame과 Accessibility frame 차이 때문에 정확한 창을 찾지 못하는 문제가 확인됐다. `AXFocusedWindow`와 `AXWindows`의 각 AX 창에서 `_AXUIElementGetWindow`로 실제 `CGWindowID`를 얻어 대상 ID와 직접 대조하며, 해당 API가 실패하는 환경에서만 8px geometry 비교를 보조 경로로 사용한다.
 - Kick 웹뷰의 위치 이동이나 이벤트 처리가 실패해도 Rust가 1.2초 뒤 pending 개입을 다시 fresh 검증하고 완료한다. 설정 화면은 `minimized`, 권한 거부, 대상 변경, 검사 실패 결과를 비민감 문구로 표시한다.
+- 집중 보호 설정 저장은 권한 프롬프트를 다시 호출하지 않고 현재 권한 상태만 조회한다. 권한 요청은 사용자가 `권한 설정` 버튼을 누를 때만 실행한다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
@@ -286,6 +287,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - macOS 화면 기록 권한이 없으면 다른 앱의 창 제목이 비어 제목 기반 규칙이 매치되지 않을 수 있다. 프로세스 이름 규칙은 계속 사용할 수 있다.
 - macOS 손쉬운 사용 권한이 없으면 방해 창 최소화는 안전하게 실패한다. 개입은 기본 off다.
 - 번들 앱은 Apple Developer ID 서명·공증을 아직 하지 않은 개발 산출물이다.
+- 현재 ad-hoc 서명은 지정 요구사항이 빌드별 `CDHash`라 앱을 새로 빌드하면 macOS 손쉬운 사용 권한을 한 번 다시 허용해야 한다. 설정 저장만으로는 더 이상 권한 요청을 띄우지 않는다.
 - 투명 WKWebView를 위해 Tauri `macOSPrivateApi`를 사용하므로 Mac App Store에는 배포할 수 없다. GitHub DMG 직접 배포 경로를 유지한다.
 - 자동 화면 캡처는 화면 기록 권한 부재로 실패했다. 투명 펫 창, always-on-top, 메뉴 막대 아이콘과 각 유틸리티 창은 사용자 화면에서 확인해야 한다.
 - 일반 사용자 데스크톱에서 감자봇 외 배경이 완전히 투명한지 확인해야 한다.
