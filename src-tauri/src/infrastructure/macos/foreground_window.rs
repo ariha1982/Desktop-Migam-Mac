@@ -96,10 +96,16 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
             return Ok(None);
         }
         let process_name = application.localizedName().map(|name| name.to_string());
+        let focused_window = focused_ax_window(process_id);
 
         let windows =
             window_list(kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements)?;
-        Ok(snapshot_for_process(&windows, process_id, process_name))
+        Ok(snapshot_for_process(
+            &windows,
+            process_id,
+            process_name,
+            focused_window.as_ref(),
+        ))
     }
 
     fn foreground_window_excluding(
@@ -138,52 +144,118 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
         let process_name =
             NSRunningApplication::runningApplicationWithProcessIdentifier(process_id)
                 .and_then(|application| application.localizedName().map(|name| name.to_string()));
-        Ok(snapshot_for_process(&windows, process_id, process_name))
+        let focused_window = focused_ax_window(process_id);
+        Ok(snapshot_for_process(
+            &windows,
+            process_id,
+            process_name,
+            focused_window.as_ref(),
+        ))
     }
+}
+
+struct FocusedAxWindow {
+    window_id: u32,
+    title: Option<String>,
+}
+
+fn focused_ax_window(process_id: libc::pid_t) -> Option<FocusedAxWindow> {
+    if unsafe { AXIsProcessTrusted() } == 0 {
+        return None;
+    }
+    let application = unsafe { AXUIElementCreateApplication(process_id) };
+    if application.is_null() {
+        return None;
+    }
+    let focused_attribute = CFString::from_static_string("AXFocusedWindow");
+    let mut focused_window: CFTypeRef = ptr::null();
+    let copied = unsafe {
+        AXUIElementCopyAttributeValue(
+            application,
+            focused_attribute.as_concrete_TypeRef(),
+            &mut focused_window,
+        )
+    };
+    unsafe { core_foundation::base::CFRelease(application.cast()) };
+    if copied != 0 || focused_window.is_null() {
+        return None;
+    }
+
+    let mut window_id = 0;
+    let window: AXUIElementRef = focused_window.cast();
+    let id_result = unsafe { _AXUIElementGetWindow(window, &mut window_id) };
+    let title = copy_ax_string(window, "AXTitle");
+    unsafe { core_foundation::base::CFRelease(focused_window) };
+    (id_result == 0 && window_id != 0).then_some(FocusedAxWindow { window_id, title })
 }
 
 fn snapshot_for_process(
     windows: &CFArray<CFDictionary<CFString, CFType>>,
     process_id: libc::pid_t,
     process_name: Option<String>,
+    focused_window: Option<&FocusedAxWindow>,
 ) -> Option<WindowSnapshot> {
-    windows.iter().find_map(|window| {
-        let owner_pid = number_value(&window, unsafe { kCGWindowOwnerPID })?;
-        let layer = number_value(&window, unsafe { kCGWindowLayer })?;
-        if owner_pid != i64::from(process_id) || layer != 0 {
-            return None;
-        }
-
-        let window_id = number_value(&window, unsafe { kCGWindowNumber })?;
-        let bounds = dictionary_value(&window, unsafe { kCGWindowBounds })?;
-        let bounds = CGRect::from_dict_representation(&bounds)?;
-        if bounds.size.width <= 1.0 || bounds.size.height <= 1.0 {
-            return None;
-        }
-        let display_bounds = display_containing(&bounds);
-        let is_fullscreen = display_bounds.is_some_and(|display| {
-            nearly_equal(bounds.origin.x, display.origin.x)
-                && nearly_equal(bounds.origin.y, display.origin.y)
-                && nearly_equal(bounds.size.width, display.size.width)
-                && nearly_equal(bounds.size.height, display.size.height)
-        });
-
-        Some(WindowSnapshot {
-            window_id: isize::try_from(window_id).ok()?,
-            process_id: u32::try_from(process_id).ok()?,
-            process_name: process_name.clone(),
-            title: string_value(&window, unsafe { kCGWindowName }),
-            is_visible: true,
-            is_minimized: false,
-            is_fullscreen,
-            monitor_left: display_bounds
-                .map_or(bounds.origin.x, |display| display.origin.x)
-                .round() as i32,
-            x: bounds.origin.x.round() as i32,
-            y: bounds.origin.y.round() as i32,
-            width: bounds.size.width.round().max(0.0) as u32,
-            height: bounds.size.height.round().max(0.0) as u32,
+    let preferred = focused_window.and_then(|focused| {
+        windows.iter().find_map(|window| {
+            let window_id = number_value(&window, unsafe { kCGWindowNumber })?;
+            (u32::try_from(window_id).ok()? == focused.window_id).then(|| {
+                snapshot_from_window(
+                    &window,
+                    process_id,
+                    process_name.clone(),
+                    focused.title.clone(),
+                )
+            })?
         })
+    });
+    preferred.or_else(|| {
+        windows.iter().find_map(|window| {
+            snapshot_from_window(&window, process_id, process_name.clone(), None)
+        })
+    })
+}
+
+fn snapshot_from_window(
+    window: &CFDictionary<CFString, CFType>,
+    process_id: libc::pid_t,
+    process_name: Option<String>,
+    title: Option<String>,
+) -> Option<WindowSnapshot> {
+    let owner_pid = number_value(window, unsafe { kCGWindowOwnerPID })?;
+    let layer = number_value(window, unsafe { kCGWindowLayer })?;
+    if owner_pid != i64::from(process_id) || layer != 0 {
+        return None;
+    }
+
+    let window_id = number_value(window, unsafe { kCGWindowNumber })?;
+    let bounds = dictionary_value(window, unsafe { kCGWindowBounds })?;
+    let bounds = CGRect::from_dict_representation(&bounds)?;
+    if bounds.size.width <= 1.0 || bounds.size.height <= 1.0 {
+        return None;
+    }
+    let display_bounds = display_containing(&bounds);
+    let is_fullscreen = display_bounds.is_some_and(|display| {
+        nearly_equal(bounds.origin.x, display.origin.x)
+            && nearly_equal(bounds.origin.y, display.origin.y)
+            && nearly_equal(bounds.size.width, display.size.width)
+            && nearly_equal(bounds.size.height, display.size.height)
+    });
+
+    Some(WindowSnapshot {
+        window_id: isize::try_from(window_id).ok()?,
+        process_id: u32::try_from(process_id).ok()?,
+        process_name,
+        title: title.or_else(|| string_value(window, unsafe { kCGWindowName })),
+        is_visible: true,
+        is_minimized: false,
+        is_fullscreen,
+        monitor_left: display_bounds
+            .map_or(bounds.origin.x, |display| display.origin.x)
+            .round() as i32,
+        x: bounds.origin.x.round() as i32,
+        y: bounds.origin.y.round() as i32,
+        width: bounds.size.width.round().max(0.0) as u32,
+        height: bounds.size.height.round().max(0.0) as u32,
     })
 }
 
@@ -404,6 +476,19 @@ fn copy_ax_value<T: Default>(
         unsafe { AXValueGetValue(value.cast(), value_type, (&mut output as *mut T).cast()) };
     unsafe { core_foundation::base::CFRelease(value) };
     (succeeded != 0).then_some(output)
+}
+
+fn copy_ax_string(element: AXUIElementRef, attribute: &'static str) -> Option<String> {
+    let attribute = CFString::from_static_string(attribute);
+    let mut value: CFTypeRef = ptr::null();
+    let copied = unsafe {
+        AXUIElementCopyAttributeValue(element, attribute.as_concrete_TypeRef(), &mut value)
+    };
+    if copied != 0 || value.is_null() {
+        return None;
+    }
+    let value = unsafe { CFType::wrap_under_create_rule(value) };
+    value.downcast::<CFString>().map(|value| value.to_string())
 }
 
 fn geometry_value_matches(left: f64, right: f64) -> bool {

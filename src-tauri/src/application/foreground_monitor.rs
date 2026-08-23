@@ -7,11 +7,24 @@ use crate::domain::{
     settings::FocusGuardSettings,
 };
 
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DetectionReason {
+    #[default]
+    Inactive,
+    WindowUnavailable,
+    Protected,
+    TitleUnavailable,
+    RuleMismatch,
+    Matched,
+}
+
 #[derive(Clone, Debug, Default, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DetectionState {
     pub matched: bool,
     pub rule_id: Option<String>,
+    pub reason: DetectionReason,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
@@ -118,6 +131,34 @@ impl ForegroundMonitor {
                 .find(|rule| rule.enabled && rule.matches(process_name, title))
                 .map(|rule| (rule.id.clone(), rule.grace_seconds, rule.cooldown_seconds))
         });
+        let reason = if !active {
+            DetectionReason::Inactive
+        } else if snapshot.is_none() {
+            DetectionReason::WindowUnavailable
+        } else if snapshot
+            .as_ref()
+            .is_some_and(|snapshot| self.is_protected(snapshot))
+        {
+            DetectionReason::Protected
+        } else if matched.is_some() {
+            DetectionReason::Matched
+        } else if snapshot.as_ref().is_some_and(|snapshot| {
+            snapshot
+                .title
+                .as_deref()
+                .is_none_or(|title| title.trim().is_empty())
+                && settings.rules.iter().any(|rule| {
+                    rule.enabled
+                        && rule
+                            .window_title
+                            .as_deref()
+                            .is_some_and(|title| !title.trim().is_empty())
+                })
+        }) {
+            DetectionReason::TitleUnavailable
+        } else {
+            DetectionReason::RuleMismatch
+        };
 
         let mut runtime = self
             .runtime
@@ -127,6 +168,7 @@ impl ForegroundMonitor {
         let next_detection = DetectionState {
             matched: matched.is_some(),
             rule_id: matched.as_ref().map(|(id, _, _)| id.clone()),
+            reason,
         };
         if runtime.detection != next_detection {
             runtime.detection = next_detection.clone();
@@ -422,13 +464,42 @@ mod tests {
     }
 
     #[test]
+    fn reports_when_a_title_rule_cannot_read_a_usable_window_title() {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let untitled = snapshot("chrome.exe", "   ");
+        let monitor = ForegroundMonitor::new(
+            Box::new(FakeSource {
+                calls,
+                snapshot: Some(untitled),
+            }),
+            Box::new(FakeMinimizer(Arc::new(AtomicUsize::new(0)))),
+            999,
+        );
+
+        let effects = monitor
+            .poll(Instant::now(), true, false, &settings())
+            .unwrap();
+        let ForegroundEffect::Detection(detection) = &effects[0] else {
+            panic!("expected a detection update");
+        };
+        assert_eq!(detection.reason, DetectionReason::TitleUnavailable);
+        assert!(!detection.matched);
+    }
+
+    #[test]
     fn starts_after_grace_and_minimizes_only_after_fresh_revalidation() {
         let calls = Arc::new(AtomicUsize::new(0));
         let minimized = Arc::new(AtomicUsize::new(0));
         let monitor = monitor(calls.clone(), minimized.clone());
         let now = Instant::now();
         let first = monitor.poll(now, true, false, &settings()).unwrap();
-        assert!(matches!(first.as_slice(), [ForegroundEffect::Detection(_)]));
+        assert!(matches!(
+            first.as_slice(),
+            [ForegroundEffect::Detection(DetectionState {
+                reason: DetectionReason::Matched,
+                ..
+            })]
+        ));
 
         let effects = monitor
             .poll(

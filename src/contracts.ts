@@ -11,6 +11,13 @@ export interface DistractionRule {
 export interface DetectionState {
   matched: boolean;
   ruleId?: string;
+  reason:
+    | "inactive"
+    | "windowUnavailable"
+    | "protected"
+    | "titleUnavailable"
+    | "ruleMismatch"
+    | "matched";
 }
 
 export interface FocusGuardPermissionState {

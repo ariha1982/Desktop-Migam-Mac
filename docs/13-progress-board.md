@@ -177,7 +177,7 @@
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
 | BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
-| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, Kick 오버레이 전면 점유와 AX/CG frame 불일치로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 오버레이 제외 재검증·AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, CG 제목 누락, Kick 오버레이 전면 점유와 AX/CG frame 불일치로 동작하지 않음 | Safari/Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — AX focused 제목·ID 감지, 오버레이 제외 재검증·AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
 | BUG-005 | S2 | 집중 보호 설정 저장 시 권한 요청 API를 다시 호출해 손쉬운 사용 프롬프트가 반복됨 | 집중 보호를 켜고 설정 저장 | Codex | 수정 완료 — 저장 후 비대화형 권한 조회만 실행, 요청은 `권한 설정` 버튼으로 제한 |
 
 심각도:
@@ -288,6 +288,8 @@
 | 2026-08-24 | AX/CG 창 식별 수정 후 전체 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성, 새 앱 실행 |
 | 2026-08-24 | 권한 반복 요청 수정 후 전체 검사 | 통과 | 저장 후 비대화형 권한 조회로 변경, 프런트 25개·Rust 49개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
 | 2026-08-24 | 권한 반복 요청 수정 후 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성 |
+| 2026-08-24 | Safari 전경 감지 재수정 후 자동 검사 | 통과 | AX focused 제목·`CGWindowID` 선택과 비민감 실패 사유 추가, 프런트 25개·Rust 50개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
+| 2026-08-24 | Safari 전경 감지 재수정 후 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성 |
 
 ## 시간 예산
 
@@ -303,9 +305,9 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 집중 보호가 AX 창의 실제 `CGWindowID`를 직접 대조하고 설정 저장은 권한 상태만 조회하도록 수정됨
-마지막 성공 검사: 2026-08-24 프런트 25개·Rust 49개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics 전면 창 감지, `CGWindowID` 기반 Accessibility 최소화, 사용자 버튼 전용 권한 요청, 개입 결과 UI, Rust fallback, 사진 배달 canvas
+현재 상태: macOS 집중 보호가 AX focused 제목·`CGWindowID`로 Safari 전경 창을 선택하고 설정 저장은 권한 상태만 조회하도록 수정됨
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 50개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics/Accessibility 전면 창 감지, `CGWindowID` 기반 최소화, 비민감 감지 실패 사유, 사용자 버튼 전용 권한 요청, 개입 결과 UI, Rust fallback, 사진 배달 canvas
 다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 `방해 창 최소화 완료` 상태와 실제 최소화를 수동 확인
 알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
 실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
