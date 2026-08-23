@@ -16,6 +16,15 @@ pub struct WindowSnapshot {
 
 pub trait ForegroundWindowSource: Send + Sync {
     fn foreground_window(&self) -> Result<Option<WindowSnapshot>, ForegroundReadError>;
+
+    fn foreground_window_excluding(
+        &self,
+        process_id: u32,
+    ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+        Ok(self
+            .foreground_window()?
+            .filter(|snapshot| snapshot.process_id != process_id))
+    }
 }
 
 pub trait WindowMinimizer: Send + Sync {

@@ -21,11 +21,13 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - 사진 배달 감자펫이 macOS WebKit에서 보이지 않아 런타임 `blob:` CSS 배경을 제거하고 투명화 결과를 600×200 canvas에 직접 그려 4프레임을 재생하도록 변경했다.
 - 집중 보호 설정에 화면 기록·손쉬운 사용 권한 상태와 요청 버튼을 추가했다. `NAVER Whale`/`Whale` 및 Windows/macOS Chrome·Edge 실행 이름은 제한된 알려진 별칭으로 정규화한다.
 - AX focused window와 CoreGraphics frame은 최대 8px 차이를 허용하지만, 개입 직전 전경 window ID·PID·규칙 일치 재검증은 유지한다.
+- 후속 사용자 검증에서 최소화가 여전히 동작하지 않아 Kick 창이 전면 앱을 점유할 때 그 아래 최상위 외부 창을 재검증하도록 분리했다. `AXFocusedWindow`가 없거나 geometry가 다르면 같은 앱의 `AXWindows` 목록에서 일치 창을 찾는다.
+- Kick 웹뷰의 위치 이동이나 이벤트 처리가 실패해도 Rust가 1.2초 뒤 pending 개입을 다시 fresh 검증하고 완료한다. 설정 화면은 `minimized`, 권한 거부, 대상 변경, 검사 실패 결과를 비민감 문구로 표시한다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
 - `npm run build`: Vite production build 통과.
-- Rust 1.98 stable을 설치했고 현재 `cargo test` 47개, rustfmt, Clippy `-D warnings`가 통과했다.
+- Rust 1.98 stable을 설치했고 현재 `cargo test` 48개, rustfmt, Clippy `-D warnings`가 통과했다.
 - `npm run tauri -- build --no-bundle`과 전체 bundle build가 통과했다.
 - `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg`를 생성했고 번들 앱 프로세스 실행을 확인했다.
 
@@ -303,7 +305,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 
 1. 펫 우클릭 `사진 배달 테스트`에서 사진과 canvas 감자펫이 함께 진입하는지 확인한다.
 2. 설정의 `권한 설정`에서 화면 기록·손쉬운 사용을 허용하고 필요하면 앱을 재시작한다.
-3. 현재 `NAVER Whale` + `YouTube` 규칙으로 Focus를 시작해 감지 표시, 5초 유예, Kick, 해당 창 최소화를 확인한다.
+3. 현재 `NAVER Whale` + `YouTube` 규칙으로 Focus를 시작해 감지 표시, 5초 유예, Kick, `방해 창 최소화 완료` 상태와 실제 최소화를 확인한다.
 4. 대상 변경과 `Cmd+Shift+F12`에서 pending 개입이 취소되는지 확인한다.
 5. 단일 Retina와 가능하면 보조 모니터에서 걷기·드래그·던지기·작업 영역 경계를 확인한다.
 

@@ -2,12 +2,16 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { PhysicalPosition, getCurrentWindow } from "@tauri-apps/api/window";
 import kickImage from "../../images/characters/gamjabot/extra/frames/kick/00.png";
-import type { InterventionRequest } from "../contracts";
+import type { InterventionOutcome, InterventionRequest } from "../contracts";
 
 const FLIGHT_MS = 760;
 
 function nextFrame(): Promise<number> {
   return new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
+function delay(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
 function easeOutCubic(value: number): number {
@@ -32,26 +36,30 @@ export async function mountKick(root: HTMLElement): Promise<() => void> {
     activeId = request.interventionId;
     image.classList.remove("impact");
     image.classList.add("flying");
-    await effectWindow.setPosition(new PhysicalPosition(request.startX, request.y));
     const startedAt = performance.now();
-    let lastMoveAt = 0;
-    while (!disposed && activeId === request.interventionId) {
-      const timestamp = await nextFrame();
-      const progress = Math.min(1, (timestamp - startedAt) / FLIGHT_MS);
-      if (timestamp - lastMoveAt >= 24 || progress === 1) {
-        const x = Math.round(
-          request.startX + (request.impactX - request.startX) * easeOutCubic(progress),
-        );
-        await effectWindow.setPosition(new PhysicalPosition(x, request.y));
-        lastMoveAt = timestamp;
+    try {
+      await effectWindow.setPosition(new PhysicalPosition(request.startX, request.y));
+      let lastMoveAt = 0;
+      while (!disposed && activeId === request.interventionId) {
+        const timestamp = await nextFrame();
+        const progress = Math.min(1, (timestamp - startedAt) / FLIGHT_MS);
+        if (timestamp - lastMoveAt >= 24 || progress === 1) {
+          const x = Math.round(
+            request.startX + (request.impactX - request.startX) * easeOutCubic(progress),
+          );
+          await effectWindow.setPosition(new PhysicalPosition(x, request.y));
+          lastMoveAt = timestamp;
+        }
+        if (progress >= 0.82) image.classList.add("impact");
+        if (progress >= 1) break;
       }
-      if (progress >= 0.82) image.classList.add("impact");
-      if (progress >= 1) break;
+    } catch {
+      await delay(Math.max(0, FLIGHT_MS - (performance.now() - startedAt)));
     }
     if (disposed || activeId !== request.interventionId) return;
     image.classList.remove("flying");
     try {
-      await invoke<boolean>("complete_intervention", {
+      await invoke<InterventionOutcome>("complete_intervention", {
         interventionId: request.interventionId,
       });
     } catch {

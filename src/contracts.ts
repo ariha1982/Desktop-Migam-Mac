@@ -25,6 +25,14 @@ export interface InterventionRequest {
   y: number;
 }
 
+export type InterventionOutcome =
+  | "minimized"
+  | "inactive"
+  | "missing"
+  | "targetChanged"
+  | "accessDenied"
+  | "inspectionFailed";
+
 export interface Settings {
   schemaVersion: number;
   pet: {

@@ -82,6 +82,8 @@ pub fn run() {
                                             let _ = timer_app.emit("focus://detection", detection);
                                         }
                                         ForegroundEffect::Start(request) => {
+                                            let fallback_app = timer_app.clone();
+                                            let fallback_id = request.intervention_id;
                                             if let Some(card) = timer_app.get_webview_window("card")
                                             {
                                                 let _ = card.set_position(
@@ -94,6 +96,19 @@ pub fn run() {
                                                 let _ = card
                                                     .emit("focus://intervention-start", request);
                                             }
+                                            let _ = std::thread::Builder::new()
+                                                .name("focus-intervention-fallback".to_owned())
+                                                .spawn(move || {
+                                                    std::thread::sleep(
+                                                        std::time::Duration::from_millis(1_200),
+                                                    );
+                                                    let state = fallback_app.state::<AppState>();
+                                                    let _ = presentation::commands::complete_intervention(
+                                                        fallback_app.clone(),
+                                                        state,
+                                                        fallback_id,
+                                                    );
+                                                });
                                         }
                                         ForegroundEffect::Cancel(intervention_id) => {
                                             if let Some(card) = timer_app.get_webview_window("card")

@@ -34,6 +34,10 @@
 
 ## 오늘 완료
 
+- [x] Kick 창이 macOS 전면 앱을 순간 점유해도 그 아래의 최상위 외부 창을 fresh 재검증하도록 수정
+- [x] `AXFocusedWindow` 실패 시 `AXWindows`에서 동일 geometry 창을 찾는 안전한 최소화 fallback 추가
+- [x] Kick 웹뷰 이동 실패와 무관하게 1.2초 뒤 Rust가 재검증·최소화를 완료하는 fallback 추가
+- [x] 설정 화면에 최소화 성공·권한 거부·대상 변경·검사 실패 결과 표시
 - [x] 사진 배달 감자펫을 WebKit `blob:` CSS 배경 대신 투명화 canvas 프레임으로 직접 렌더링
 - [x] 집중 보호 화면 기록·손쉬운 사용 권한 상태 조회와 요청 버튼 추가
 - [x] `NAVER Whale`/`Whale`, Windows/macOS Chrome·Edge 실행 이름을 안전한 알려진 별칭으로 정규화
@@ -173,7 +177,7 @@
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
 | BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
-| BUG-004 | S1 | macOS 집중 보호가 권한 누락과 `NAVER Whale`/`Whale` 이름 차이로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 수정 완료 — 권한 UI·브라우저 별칭·AX 허용 오차 적용, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, Kick 오버레이 전면 점유와 AX focused window 실패로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 오버레이 제외 재검증·AXWindows·Rust fallback 적용, 사용자 재검증 대기 |
 
 심각도:
 
@@ -277,6 +281,8 @@
 | 2026-08-24 | macOS 투명 창 수정 후 Tauri build | 통과 | `macos-private-api` 적용 상태로 release 실행 파일, `.app`, Apple Silicon DMG 재생성 |
 | 2026-08-24 | 사진 배달·집중 보호 수정 후 자동 검사 | 통과 | 프런트 25개, Rust 47개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
 | 2026-08-24 | 사진 배달·집중 보호 수정 후 전체 bundle build | 통과 | 수정된 `.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg` 생성 |
+| 2026-08-24 | 집중 보호 재수정 후 자동 검사 | 통과 | 프런트 25개·Rust 48개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
+| 2026-08-24 | 집중 보호 재수정 후 전체 bundle build | 통과 | 새 브랜치에서 `.app`과 Apple Silicon DMG 생성 |
 
 ## 시간 예산
 
@@ -292,10 +298,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 사진 배달 canvas 렌더링과 집중 보호 권한·브라우저 별칭 수정, Apple Silicon 배포 번들 생성 완료
-마지막 성공 검사: 2026-08-24 프런트 25개·Rust 47개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, 집중 보호 권한 UI, 브라우저 이름 정규화, 사진 배달 canvas, 앱/DMG 번들
-다음으로 할 일: 새 앱에서 사진 배달 감자펫 표시와 권한 허용 후 Whale/YouTube 감지·Kick·최소화를 수동 확인
+현재 상태: macOS 집중 보호의 Kick 오버레이 제외 재검증·AXWindows·Rust fallback 구현, 새 브랜치 배포 검증 중
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 48개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics 전면 창 감지, 다중 경로 Accessibility 최소화, 개입 결과 UI, Rust fallback, 사진 배달 canvas
+다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 결과 상태와 실제 최소화를 수동 확인
 알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
 실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
 ```

@@ -6,6 +6,7 @@ import type {
   DetectionState,
   DistractionRule,
   FocusGuardPermissionState,
+  InterventionOutcome,
   Settings,
   SystemMetricsState,
   ResourceResponseMode,
@@ -298,6 +299,19 @@ function renderSettings(
   void listen<DetectionState>("focus://detection", (event) => showDetection(event.payload)).then(
     (unlisten) => window.addEventListener("pagehide", unlisten, { once: true }),
   );
+  void listen<InterventionOutcome>("focus://intervention-result", (event) => {
+    if (!detectionStatus) return;
+    const labels: Record<InterventionOutcome, string> = {
+      minimized: "방해 창 최소화 완료",
+      inactive: "개입 취소 · 집중 상태가 아님",
+      missing: "개입 취소 · 요청 만료",
+      targetChanged: "개입 취소 · 대상 창 변경됨",
+      accessDenied: "최소화 실패 · 손쉬운 사용 권한 필요",
+      inspectionFailed: "최소화 실패 · 대상 창을 확인할 수 없음",
+    };
+    detectionStatus.textContent = labels[event.payload];
+    detectionStatus.classList.toggle("matched", event.payload === "minimized");
+  }).then((unlisten) => window.addEventListener("pagehide", unlisten, { once: true }));
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = new FormData(form);

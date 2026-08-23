@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Mutex, time::Instant};
 use serde::Serialize;
 
 use crate::domain::{
-    foreground::{ForegroundWindowSource, WindowMinimizer, WindowSnapshot},
+    foreground::{ForegroundReadError, ForegroundWindowSource, WindowMinimizer, WindowSnapshot},
     settings::FocusGuardSettings,
 };
 
@@ -21,6 +21,17 @@ pub struct InterventionRequest {
     pub start_x: i32,
     pub impact_x: i32,
     pub y: i32,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum InterventionOutcome {
+    Minimized,
+    Inactive,
+    Missing,
+    TargetChanged,
+    AccessDenied,
+    InspectionFailed,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -197,10 +208,10 @@ impl ForegroundMonitor {
         focus_running: bool,
         emergency_stopped: bool,
         settings: &FocusGuardSettings,
-    ) -> Result<bool, String> {
+    ) -> Result<InterventionOutcome, String> {
         if !focus_running || emergency_stopped || !settings.intervention_enabled {
             self.cancel(intervention_id)?;
-            return Ok(false);
+            return Ok(InterventionOutcome::Inactive);
         }
         let pending = self
             .runtime
@@ -209,9 +220,13 @@ impl ForegroundMonitor {
             .pending
             .clone();
         let Some(pending) = pending.filter(|pending| pending.id == intervention_id) else {
-            return Ok(false);
+            return Ok(InterventionOutcome::Missing);
         };
-        let fresh = self.source.foreground_window().ok().flatten();
+        let fresh = self
+            .source
+            .foreground_window_excluding(self.application_process_id)
+            .ok()
+            .flatten();
         let still_matches = fresh.as_ref().is_some_and(|snapshot| {
             if snapshot.window_id != pending.window_id || self.is_protected(snapshot) {
                 return false;
@@ -224,10 +239,14 @@ impl ForegroundMonitor {
         });
         if !still_matches {
             self.cancel(intervention_id)?;
-            return Ok(false);
+            return Ok(InterventionOutcome::TargetChanged);
         }
 
-        let minimized = self.minimizer.minimize(pending.window_id).is_ok();
+        let outcome = match self.minimizer.minimize(pending.window_id) {
+            Ok(()) => InterventionOutcome::Minimized,
+            Err(ForegroundReadError::AccessDenied) => InterventionOutcome::AccessDenied,
+            Err(ForegroundReadError::InspectionFailed) => InterventionOutcome::InspectionFailed,
+        };
         let mut runtime = self
             .runtime
             .lock()
@@ -244,7 +263,7 @@ impl ForegroundMonitor {
             runtime.pending = None;
             runtime.candidate = None;
         }
-        Ok(minimized)
+        Ok(outcome)
     }
 
     pub fn cancel(&self, intervention_id: u64) -> Result<bool, String> {
@@ -423,10 +442,69 @@ mod tests {
             panic!("expected an intervention request");
         };
         assert_eq!(minimized.load(Ordering::SeqCst), 0);
-        assert!(monitor
-            .complete(request.intervention_id, now, true, false, &settings())
-            .unwrap());
+        assert_eq!(
+            monitor
+                .complete(request.intervention_id, now, true, false, &settings())
+                .unwrap(),
+            InterventionOutcome::Minimized
+        );
         assert_eq!(calls.load(Ordering::SeqCst), 3);
+        assert_eq!(minimized.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn completion_revalidates_behind_the_own_kick_overlay() {
+        struct OverlayAwareSource {
+            exclusion_calls: Arc<AtomicUsize>,
+            snapshot: WindowSnapshot,
+        }
+
+        impl ForegroundWindowSource for OverlayAwareSource {
+            fn foreground_window(&self) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+                Ok(Some(self.snapshot.clone()))
+            }
+
+            fn foreground_window_excluding(
+                &self,
+                process_id: u32,
+            ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+                assert_eq!(process_id, 999);
+                self.exclusion_calls.fetch_add(1, Ordering::SeqCst);
+                Ok(Some(self.snapshot.clone()))
+            }
+        }
+
+        let exclusion_calls = Arc::new(AtomicUsize::new(0));
+        let minimized = Arc::new(AtomicUsize::new(0));
+        let monitor = ForegroundMonitor::new(
+            Box::new(OverlayAwareSource {
+                exclusion_calls: exclusion_calls.clone(),
+                snapshot: snapshot("chrome.exe", "Music - YouTube"),
+            }),
+            Box::new(FakeMinimizer(minimized.clone())),
+            999,
+        );
+        let now = Instant::now();
+        monitor.poll(now, true, false, &settings()).unwrap();
+        let effects = monitor
+            .poll(
+                now + std::time::Duration::from_secs(5),
+                true,
+                false,
+                &settings(),
+            )
+            .unwrap();
+        let ForegroundEffect::Start(request) = &effects[0] else {
+            panic!("expected an intervention request");
+        };
+
+        assert_eq!(
+            monitor
+                .complete(request.intervention_id, now, true, false, &settings())
+                .unwrap(),
+            InterventionOutcome::Minimized
+        );
+        assert_eq!(exclusion_calls.load(Ordering::SeqCst), 1);
         assert_eq!(minimized.load(Ordering::SeqCst), 1);
     }
 

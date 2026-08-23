@@ -6,7 +6,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 use crate::{
     app_state::AppState,
     application::{
-        foreground_monitor::DetectionState,
+        foreground_monitor::{DetectionState, InterventionOutcome},
         gamcha_service::{CostumeAlignment, GamchaDrawResult, GamchaSnapshot},
         pomodoro_service::TimerState,
         todo_service::TodoSnapshot,
@@ -291,7 +291,7 @@ pub fn complete_intervention(
     app: AppHandle,
     state: State<'_, AppState>,
     intervention_id: u64,
-) -> Result<bool, String> {
+) -> Result<InterventionOutcome, String> {
     let timer = dispatch_timer(&app, &state, PomodoroEvent::Tick)?;
     let settings = state
         .settings
@@ -299,7 +299,7 @@ pub fn complete_intervention(
         .map_err(|_| "settings state is unavailable".to_owned())?
         .focus_guard
         .clone();
-    let minimized = state.foreground_monitor.complete(
+    let outcome = state.foreground_monitor.complete(
         intervention_id,
         Instant::now(),
         timer.phase == PomodoroPhase::Focus,
@@ -309,7 +309,10 @@ pub fn complete_intervention(
     if let Some(card) = app.get_webview_window("card") {
         let _ = card.hide();
     }
-    Ok(minimized)
+    if outcome != InterventionOutcome::Missing {
+        let _ = app.emit("focus://intervention-result", outcome);
+    }
+    Ok(outcome)
 }
 
 #[tauri::command]
