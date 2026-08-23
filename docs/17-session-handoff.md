@@ -24,13 +24,14 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - 후속 사용자 검증에서 Whale의 CoreGraphics frame과 Accessibility frame 차이 때문에 정확한 창을 찾지 못하는 문제가 확인됐다. `AXFocusedWindow`와 `AXWindows`의 각 AX 창에서 `_AXUIElementGetWindow`로 실제 `CGWindowID`를 얻어 대상 ID와 직접 대조하며, 해당 API가 실패하는 환경에서만 8px geometry 비교를 보조 경로로 사용한다.
 - Safari 제목 규칙이 계속 감지되지 않아 전경 감지도 `AXFocusedWindow`에서 제목과 `CGWindowID`를 한 쌍으로 읽도록 변경했다. CoreGraphics 목록의 첫 창이나 비어 있는 `kCGWindowName`에 의존하지 않고 실제 포커스 창을 선택하며, AX 조회 실패 시에만 기존 CoreGraphics 제목을 사용한다.
 - 설정의 감지 상태는 집중 비활성, 전경 창 조회 실패, 보호 창, 제목 조회 실패, 규칙 불일치, 일치 성공을 구분해 실제 제목이나 경로를 노출하지 않고 표시한다.
+- 설정창 자체가 전경이 되면 앱 자체 보호 판정으로 Safari 후보와 유예가 취소되던 문제를 수정했다. 평상시 polling도 앱 PID를 제외하고 그 뒤의 외부 전경창을 읽으며, 전체 화면 보호는 일반 시스템/자체 창 보호와 별도 상태로 표시한다.
 - Kick 웹뷰의 위치 이동이나 이벤트 처리가 실패해도 Rust가 1.2초 뒤 pending 개입을 다시 fresh 검증하고 완료한다. 설정 화면은 `minimized`, 권한 거부, 대상 변경, 검사 실패 결과를 비민감 문구로 표시한다.
 - 집중 보호 설정 저장은 권한 프롬프트를 다시 호출하지 않고 현재 권한 상태만 조회한다. 권한 요청은 사용자가 `권한 설정` 버튼을 누를 때만 실행한다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
 - `npm run build`: Vite production build 통과.
-- Rust 1.98 stable을 설치했고 현재 `cargo test` 50개, rustfmt, Clippy `-D warnings`가 통과했다.
+- Rust 1.98 stable을 설치했고 현재 `cargo test` 51개, rustfmt, Clippy `-D warnings`가 통과했다.
 - `npm run tauri -- build --no-bundle`과 전체 bundle build가 통과했다.
 - `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg`를 생성했고 번들 앱 프로세스 실행을 확인했다.
 

@@ -14,6 +14,7 @@ pub enum DetectionReason {
     Inactive,
     WindowUnavailable,
     Protected,
+    FullscreenProtected,
     TitleUnavailable,
     RuleMismatch,
     Matched,
@@ -115,7 +116,10 @@ impl ForegroundMonitor {
     ) -> Result<Vec<ForegroundEffect>, String> {
         let active = focus_running && !emergency_stopped && settings.intervention_enabled;
         let snapshot = if active {
-            self.source.foreground_window().ok().flatten()
+            self.source
+                .foreground_window_excluding(self.application_process_id)
+                .ok()
+                .flatten()
         } else {
             None
         };
@@ -135,6 +139,11 @@ impl ForegroundMonitor {
             DetectionReason::Inactive
         } else if snapshot.is_none() {
             DetectionReason::WindowUnavailable
+        } else if snapshot
+            .as_ref()
+            .is_some_and(|snapshot| snapshot.is_fullscreen)
+        {
+            DetectionReason::FullscreenProtected
         } else if snapshot
             .as_ref()
             .is_some_and(|snapshot| self.is_protected(snapshot))
@@ -487,6 +496,51 @@ mod tests {
     }
 
     #[test]
+    fn polling_looks_behind_the_apps_own_settings_window() {
+        struct OwnWindowAwareSource {
+            snapshot: WindowSnapshot,
+            exclusion_calls: Arc<AtomicUsize>,
+        }
+
+        impl ForegroundWindowSource for OwnWindowAwareSource {
+            fn foreground_window(&self) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+                panic!("polling must not inspect the app's own foreground window");
+            }
+
+            fn foreground_window_excluding(
+                &self,
+                process_id: u32,
+            ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+                assert_eq!(process_id, 999);
+                self.exclusion_calls.fetch_add(1, Ordering::SeqCst);
+                Ok(Some(self.snapshot.clone()))
+            }
+        }
+
+        let exclusion_calls = Arc::new(AtomicUsize::new(0));
+        let monitor = ForegroundMonitor::new(
+            Box::new(OwnWindowAwareSource {
+                snapshot: snapshot("chrome.exe", "Music - YouTube"),
+                exclusion_calls: exclusion_calls.clone(),
+            }),
+            Box::new(FakeMinimizer(Arc::new(AtomicUsize::new(0)))),
+            999,
+        );
+
+        let effects = monitor
+            .poll(Instant::now(), true, false, &settings())
+            .unwrap();
+        assert!(matches!(
+            effects.as_slice(),
+            [ForegroundEffect::Detection(DetectionState {
+                reason: DetectionReason::Matched,
+                ..
+            })]
+        ));
+        assert_eq!(exclusion_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
     fn starts_after_grace_and_minimizes_only_after_fresh_revalidation() {
         let calls = Arc::new(AtomicUsize::new(0));
         let minimized = Arc::new(AtomicUsize::new(0));
@@ -575,7 +629,7 @@ mod tests {
                 .unwrap(),
             InterventionOutcome::Minimized
         );
-        assert_eq!(exclusion_calls.load(Ordering::SeqCst), 1);
+        assert_eq!(exclusion_calls.load(Ordering::SeqCst), 3);
         assert_eq!(minimized.load(Ordering::SeqCst), 1);
     }
 

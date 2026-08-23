@@ -15,6 +15,7 @@ export interface DetectionState {
     | "inactive"
     | "windowUnavailable"
     | "protected"
+    | "fullscreenProtected"
     | "titleUnavailable"
     | "ruleMismatch"
     | "matched";

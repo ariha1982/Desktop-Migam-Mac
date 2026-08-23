@@ -274,7 +274,8 @@ function renderSettings(
     const labels: Record<DetectionState["reason"], string> = {
       inactive: "감지 대기 · 집중 타이머를 시작하세요",
       windowUnavailable: "전경 창을 읽지 못했습니다",
-      protected: "보호 대상 창 · 개입하지 않음",
+      protected: "개입 제외 · 시스템 또는 앱 자체 창",
+      fullscreenProtected: "개입 제외 · 전체 화면 창",
       titleUnavailable: "전경 창 제목을 읽지 못했습니다",
       ruleMismatch: "전경 창이 설정한 규칙과 다릅니다",
       matched: `일치 감지됨${rule ? ` · ${rule.name}` : ""}`,
