@@ -1,0 +1,1445 @@
+{
+  "schemaVersion": 1,
+  "id": "gamjabot-costumes",
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "assetType": "standalone-transparent-costume",
+  "runtimeAlignment": "not-applied",
+  "eyeNoisePolicy": "standalone source regions only; wearer previews and eye pixels excluded",
+  "count": 159,
+  "costumes": [
+    {
+      "id": "common_001",
+      "name": "검정 헤드폰",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_001.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_002",
+      "name": "탐정 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_002.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_003",
+      "name": "요리사 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_003.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_004",
+      "name": "빨간 머리띠",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_004.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_005",
+      "name": "남색 비니",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_005.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_006",
+      "name": "동그란 독서 안경",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_006.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_007",
+      "name": "빨간 넥타이",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_007.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_008",
+      "name": "초록 야구 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_008.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_009",
+      "name": "노란 우비 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_009.png",
+      "source": "catalog-81/01-common-01-09.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_010",
+      "name": "줄무늬 목도리",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_010.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_011",
+      "name": "작은 나비넥타이",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_011.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_012",
+      "name": "귀마개",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_012.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_013",
+      "name": "수면 안대",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_013.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_014",
+      "name": "종이 파티 왕관",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_014.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_015",
+      "name": "화가 베레모",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_015.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_016",
+      "name": "정원사 밀짚모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_016.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_017",
+      "name": "멜빵",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_017.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_018",
+      "name": "세일러 스카프",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_018.png",
+      "source": "catalog-81/02-common-10-18.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_019",
+      "name": "게이머 헤드셋",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_019.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_020",
+      "name": "학생 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_020.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_021",
+      "name": "제빵사 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_021.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_022",
+      "name": "등산 버킷햇",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_022.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_023",
+      "name": "수영 고글",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_023.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_024",
+      "name": "운동 머리띠",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_024.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_025",
+      "name": "미니 카메라",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_025.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_026",
+      "name": "기본 백팩",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_026.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_027",
+      "name": "산타 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_027.png",
+      "source": "catalog-81/03-common-19-27.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_028",
+      "name": "사원증 목걸이",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_028.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_029",
+      "name": "안전모",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_029.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_030",
+      "name": "간호사 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_030.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_031",
+      "name": "우체부 세트",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_031.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_032",
+      "name": "정비공 반다나",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_032.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_033",
+      "name": "바리스타 앞치마",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_033.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_034",
+      "name": "낚시꾼 모자",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_034.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_035",
+      "name": "학사모",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_035.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_036",
+      "name": "꽃 머리핀",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_036.png",
+      "source": "catalog-81/04-common-28-36.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_037",
+      "name": "토끼 귀",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_037.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_038",
+      "name": "검정 선글라스",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_038.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_039",
+      "name": "물방울 리본",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_039.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_040",
+      "name": "유틸리티 벨트",
+      "rarity": "common",
+      "collection": "catalog-81",
+      "file": "common/common_040.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_001",
+      "name": "보석 왕관",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_001.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_002",
+      "name": "투명 우주 헬멧",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_002.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_003",
+      "name": "별빛 마법사 모자",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_003.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "rare_004",
+      "name": "붉은 영웅 망토",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_004.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "rare_005",
+      "name": "개구리 후드",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_005.png",
+      "source": "catalog-81/05-common-37-40-rare-01-05.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "rare_006",
+      "name": "검은 고양이 후드",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_006.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "rare_007",
+      "name": "해적 선장 세트",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_007.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_008",
+      "name": "닌자 머리띠",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_008.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_009",
+      "name": "황동 스팀펑크 고글",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_009.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_010",
+      "name": "숲속 버섯 모자",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_010.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_011",
+      "name": "꿀벌 세트",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_011.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_012",
+      "name": "상어 후드",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_012.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "rare_013",
+      "name": "레트로 로봇 모자",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_013.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "rare_014",
+      "name": "마법 파티 모자",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_014.png",
+      "source": "catalog-81/06-rare-06-14.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "rare_015",
+      "name": "초밥 요리사 세트",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_015.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "rare_016",
+      "name": "붉은 용 후드",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_016.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_017",
+      "name": "얼음 마법사 후드",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_017.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_018",
+      "name": "숲 레인저 세트",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_018.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_019",
+      "name": "레트로 우주 안테나 헬멧",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_019.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_020",
+      "name": "뱀파이어 망토",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_020.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_021",
+      "name": "왕실 기사 투구",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_021.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "rare_022",
+      "name": "카니발 광대 모자",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_022.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "rare_023",
+      "name": "심해 잠수 헬멧",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_023.png",
+      "source": "catalog-81/07-rare-15-23.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "rare_024",
+      "name": "황금 모노클",
+      "rarity": "rare",
+      "collection": "catalog-81",
+      "file": "rare/rare_024.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "epic_001",
+      "name": "달빛 천상 왕관",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_001.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "epic_002",
+      "name": "불사조 망토",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_002.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "epic_003",
+      "name": "수정 얼음 왕관",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_003.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "epic_004",
+      "name": "숲 수호자 뿔관",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_004.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "epic_005",
+      "name": "스팀펑크 발명가 헬멧",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_005.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "epic_006",
+      "name": "네온 사이버 바이저",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_006.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "epic_007",
+      "name": "왕실 해군 제독 세트",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_007.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "epic_008",
+      "name": "흑요석 화산 왕관",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_008.png",
+      "source": "catalog-81/08-rare-24-epic-01-08.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "epic_009",
+      "name": "은하 수면모 세트",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_009.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "epic_010",
+      "name": "황금 마스터 셰프 모자",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_010.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "epic_011",
+      "name": "고대 유적 탐험가 세트",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_011.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "epic_012",
+      "name": "아케이드 챔피언 세트",
+      "rarity": "epic",
+      "collection": "catalog-81",
+      "file": "epic/epic_012.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "legendary_001",
+      "name": "태양 황제 관과 망토",
+      "rarity": "legendary",
+      "collection": "catalog-81",
+      "file": "legendary/legendary_001.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "legendary_002",
+      "name": "심야 우주 군주 후드",
+      "rarity": "legendary",
+      "collection": "catalog-81",
+      "file": "legendary/legendary_002.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "legendary_003",
+      "name": "프리즘 수정룡 세트",
+      "rarity": "legendary",
+      "collection": "catalog-81",
+      "file": "legendary/legendary_003.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "legendary_004",
+      "name": "태엽 시간지기 세트",
+      "rarity": "legendary",
+      "collection": "catalog-81",
+      "file": "legendary/legendary_004.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "special_001",
+      "name": "원조 감자 개발자 — 감자 새싹 왕관, 개발자 후드, 감자봇의 원형 입 문양을 활용한 황금 배지",
+      "rarity": "special",
+      "collection": "catalog-81",
+      "file": "special/special_001.png",
+      "source": "catalog-81/09-epic-09-12-legendary-01-04-easter-egg.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_041",
+      "name": "주황 귀달이 모자",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_041.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_042",
+      "name": "줄무늬 넥워머",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_042.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_043",
+      "name": "기본 비행사 모자",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_043.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_044",
+      "name": "꽃무늬 안경",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_044.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_045",
+      "name": "미니 작업 앞치마",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_045.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_046",
+      "name": "구름 모자",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_046.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_047",
+      "name": "나뭇잎 머리띠",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_047.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_048",
+      "name": "미니 메신저백",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_048.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_049",
+      "name": "물방울 샤워캡",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_049.png",
+      "source": "additional-45/10-common-41-49.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_050",
+      "name": "데님 버킷햇",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_050.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_051",
+      "name": "줄무늬 조끼",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_051.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_052",
+      "name": "실험실 고글",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_052.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_053",
+      "name": "제빵사 스카프",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_053.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_054",
+      "name": "캠핑 헤드램프",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_054.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_055",
+      "name": "방울 목걸이",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_055.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_056",
+      "name": "곰 귀 머리띠",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_056.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "common_057",
+      "name": "우비 케이프",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_057.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "common_058",
+      "name": "복고 뉴스보이캡",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_058.png",
+      "source": "additional-45/11-common-50-58.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_059",
+      "name": "하트 머리핀",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_059.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_060",
+      "name": "흰색 선캡",
+      "rarity": "common",
+      "collection": "additional-45",
+      "file": "common/common_060.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_025",
+      "name": "연금술사 보석모",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_025.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_026",
+      "name": "레서판다 후드",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_026.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_027",
+      "name": "달토끼 머리띠",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_027.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_028",
+      "name": "사막 유목민 두건",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_028.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_029",
+      "name": "산호초 후드",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_029.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "rare_030",
+      "name": "장난감 병정 모자",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_030.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "rare_031",
+      "name": "영화감독 베레모",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_031.png",
+      "source": "additional-45/12-common-59-60-rare-25-31.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "rare_032",
+      "name": "번개 조종사 모자",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_032.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "rare_033",
+      "name": "벚꽃 화관",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_033.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_034",
+      "name": "아케이드 외계인 후드",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_034.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_035",
+      "name": "고딕 레이스 보닛",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_035.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_036",
+      "name": "설산 등반가 세트",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_036.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_037",
+      "name": "너구리 도둑 가면",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_037.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_038",
+      "name": "축제 북 머리띠와 띠",
+      "rarity": "rare",
+      "collection": "additional-45",
+      "file": "rare/rare_038.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "epic_013",
+      "name": "오로라 주술사 뿔후드",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_013.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "epic_014",
+      "name": "기계 부엉이 학자 후드",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_014.png",
+      "source": "additional-45/13-rare-32-38-epic-13-14.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "epic_015",
+      "name": "바다 신탁 조개 왕관",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_015.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "epic_016",
+      "name": "벚꽃 수호자 망토",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_016.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "epic_017",
+      "name": "천둥새 조종사 투구",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_017.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "epic_018",
+      "name": "달빛 가면무도회 가면",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_018.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "epic_019",
+      "name": "마법 도서관 대마법사 모자",
+      "rarity": "epic",
+      "collection": "additional-45",
+      "file": "epic/epic_019.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "legendary_005",
+      "name": "심연 레비아탄 왕관",
+      "rarity": "legendary",
+      "collection": "additional-45",
+      "file": "legendary/legendary_005.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "legendary_006",
+      "name": "세계수 군주 관과 망토",
+      "rarity": "legendary",
+      "collection": "additional-45",
+      "file": "legendary/legendary_006.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 6
+    },
+    {
+      "id": "legendary_007",
+      "name": "무지개 오로라 천상 투구",
+      "rarity": "legendary",
+      "collection": "additional-45",
+      "file": "legendary/legendary_007.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 7
+    },
+    {
+      "id": "special_002",
+      "name": "숨겨진 Stitch 기록관 — 다섯 색상 조각을 이어 만든 패치워크 후드와 감자봇 원형 입 문양 잠금장식",
+      "rarity": "special",
+      "collection": "additional-45",
+      "file": "special/special_002.png",
+      "source": "additional-45/14-epic-15-19-legendary-05-07-bonus-special.png",
+      "sourceSlot": 8
+    },
+    {
+      "id": "common_061",
+      "name": "열차 차장 세트",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_061.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_062",
+      "name": "도서관 사서 카디건",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_062.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_063",
+      "name": "배달 라이더 헬멧",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_063.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_064",
+      "name": "도예가 반다나와 앞치마",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_064.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_065",
+      "name": "탐조가 모자와 쌍안경 가방",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_065.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_066",
+      "name": "복고 식당 종이모자",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_066.png",
+      "source": "more-30/15-common-61-66.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "common_067",
+      "name": "양봉가 모자",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_067.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "common_068",
+      "name": "테니스 선캡과 손목밴드",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_068.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "common_069",
+      "name": "오케스트라 지휘자 칼라",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_069.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "common_070",
+      "name": "스키 고글과 니트밴드",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_070.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "common_071",
+      "name": "필름 사진가 베레모",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_071.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "common_072",
+      "name": "구운 마시멜로 모자",
+      "rarity": "common",
+      "collection": "more-30",
+      "file": "common/common_072.png",
+      "source": "more-30/16-common-67-72.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_039",
+      "name": "붉은 사무라이 투구",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_039.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "rare_040",
+      "name": "심해 스쿠버 돔",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_040.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_041",
+      "name": "번개 록스타 헤어",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_041.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_042",
+      "name": "괴짜 과학자 세트",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_042.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "rare_043",
+      "name": "북방 바이킹 세트",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_043.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "rare_044",
+      "name": "파스텔 요정 후드",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_044.png",
+      "source": "more-30/17-rare-39-44.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "rare_045",
+      "name": "코믹 히어로 가면",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_045.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "rare_046",
+      "name": "빈티지 사립탐정 세트",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_046.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "rare_047",
+      "name": "하늘 조종사 세트",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_047.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "rare_048",
+      "name": "왕실 벨벳 모자",
+      "rarity": "rare",
+      "collection": "more-30",
+      "file": "rare/rare_048.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "epic_020",
+      "name": "진홍 쇼군 갑주",
+      "rarity": "epic",
+      "collection": "more-30",
+      "file": "epic/epic_020.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "epic_021",
+      "name": "심연 잠수부 압력 헬멧",
+      "rarity": "epic",
+      "collection": "more-30",
+      "file": "epic/epic_021.png",
+      "source": "more-30/18-rare-45-48-epic-20-21.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "epic_022",
+      "name": "폭풍 록 아이돌 왕관",
+      "rarity": "epic",
+      "collection": "more-30",
+      "file": "epic/epic_022.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "epic_023",
+      "name": "대연금술사 세트",
+      "rarity": "epic",
+      "collection": "more-30",
+      "file": "epic/epic_023.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 1
+    },
+    {
+      "id": "epic_024",
+      "name": "발키리 룬 투구",
+      "rarity": "epic",
+      "collection": "more-30",
+      "file": "epic/epic_024.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 2
+    },
+    {
+      "id": "legendary_008",
+      "name": "황금 파라오 태양관",
+      "rarity": "legendary",
+      "collection": "more-30",
+      "file": "legendary/legendary_008.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 3
+    },
+    {
+      "id": "legendary_009",
+      "name": "유령 가면무도회 후드",
+      "rarity": "legendary",
+      "collection": "more-30",
+      "file": "legendary/legendary_009.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 4
+    },
+    {
+      "id": "special_003",
+      "name": "다섯 시트의 큐레이터 — 다섯 색상 탭과 감자봇 나선 문양 잠금장식을 단 박물관 큐레이터 세트",
+      "rarity": "special",
+      "collection": "more-30",
+      "file": "special/special_003.png",
+      "source": "more-30/19-epic-22-24-legendary-08-09-secret-special.png",
+      "sourceSlot": 5
+    },
+    {
+      "id": "default_ghost",
+      "name": "클래식 유령",
+      "rarity": "default",
+      "collection": "singles",
+      "file": "default/default_ghost.png",
+      "source": "singles/classic-sheet-ghost.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "default_raincoat",
+      "name": "노란 우비",
+      "rarity": "default",
+      "collection": "singles",
+      "file": "default/default_raincoat.png",
+      "source": "singles/yellow-raincoat.png",
+      "sourceSlot": 0
+    },
+    {
+      "id": "default_clown",
+      "name": "무지개 광대",
+      "rarity": "default",
+      "collection": "singles",
+      "file": "default/default_clown.png",
+      "source": "singles/rainbow-clown.png",
+      "sourceSlot": 0
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "input": "C:\\Users\\rkddl\\desktop-pet-mvp\\images\\characters\\gamjabot\\extra\\frames\\thrown\\05.png",
+  "output": "C:\\Users\\rkddl\\desktop-pet-mvp\\images\\characters\\gamjabot\\extra\\cleaned\\thrown\\05.png",
+  "chroma_key": "#00FFFF",
+  "algorithm": "edge-local-chroma-spill-suppression",
+  "strength": 1,
+  "edge_radius": 5,
+  "spill_tolerance": 0.15,
+  "minimum_saturation": 0.1,
+  "changed_pixels": 3124,
+  "decontaminated_pixels": 2176,
+  "spill_suppressed_pixels": 3124,
+  "rejected_pixels": 0,
+  "changed_by_cell": {
+    "r0c0": 3124
+  },
+  "alpha_preserved": true
+}

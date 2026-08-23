@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "sourceAtlas": "images/characters/gamjabot/references/base-spritesheet-extended.png",
+  "sourceSha256": "a543be420dcd0ef43286296cb53c329db679a8ce257fcac0c7388d09e514cc18",
+  "sourceCanvas": [
+    1536,
+    2288
+  ],
+  "sourceCell": [
+    192,
+    208
+  ],
+  "outputCanvas": [
+    256,
+    256
+  ],
+  "cellOffset": [
+    32,
+    24
+  ],
+  "framesChecked": 63,
+  "pixelExact": true,
+  "failures": []
+}

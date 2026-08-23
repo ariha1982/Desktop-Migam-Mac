@@ -1,15 +1,15 @@
 # 13. 진행 현황판
 
 최종 갱신: 2026-08-23
-현재 단계: 투두리스트·뽀모도로 핵심 연동 구현 완료, Windows 수동 검증과 고급 축하 연출 보강
-전체 상태: 할 일 CRUD·영구 저장·집중 항목 연결·정상 종료 선택·전체 완료 1회 판정과 우클릭 독립 투두 창 구현 완료
+현재 단계: macOS 마이그레이션 시작, 기존 Tauri 앱 소스와 자산 이식
+전체 상태: README·문서 시드 레포에서 기존 Vite/TypeScript/Rust/Tauri 코드와 자산을 복사했고, macOS 안전 stub으로 프런트 빌드까지 통과
 
 ## 단계별 상태
 
 | 단계 | 상태 | 시작 | 완료 | 담당 | 결과/링크 |
 |---|---|---|---|---|---|
-| 0. 환경 확인·프로젝트 생성 | 완료 | 2026-08-23 | 2026-08-23 | Codex | 프로젝트 격리 Rust 1.98 MSVC, Node/npm, release build 확인 |
-| 1. 앱 셸 | 진행 중 | 2026-08-23 |  | Codex | 다중 창·트레이·전역 단축키 컴파일 완료, 실제 셸 수동 확인 필요 |
+| 0. 환경 확인·프로젝트 생성 | 진행 중 | 2026-08-23 |  | Codex | Node/npm, Tauri CLI, Vite build 확인; Rust/Cargo 미설치로 Tauri Rust 빌드 차단 |
+| 1. 앱 셸 | 진행 중 | 2026-08-23 |  | Codex | 기존 다중 창·메뉴바/트레이 코드 이식, macOS 투명 창 수동 확인 필요 |
 | 2. 설정 | 진행 중 | 2026-08-23 |  | Codex | 저장·복구 테스트 통과, UI 재실행 복원 수동 확인 필요 |
 | 3. 펫 이동 | 진행 중 | 2026-08-23 |  | Codex | 감자봇 v2 atlas, Idle/Walk, work area clamp와 단위 테스트 완료; Windows 수동 게이트 대기 |
 | 4. 클릭·드래그·던지기 | 진행 중 | 2026-08-23 |  | Codex | pointer capture, 속도 판정, 중력·반동·마찰·3초 제한 구현; Windows 수동 게이트 대기 |
@@ -26,11 +26,11 @@
 
 ## 현재 작업
 
-- 작업: 투두리스트 Windows 수동 검증과 전체 완료 축하 연출 보강
+- 작업: macOS 앱 셸 마이그레이션 시작
 - 시작 시각: 2026-08-23
-- 목표 종료: `docs/18-todo-pomodoro-spec.md`의 11번 완료 게이트 전체 통과 시
-- 수정 예정 파일: `docs/17-session-handoff.md`의 다음 작업 참조
-- 완료 게이트: CRUD·선택 영구 저장, 정상 Focus 종료 수동 완료 선택, 정확한 전체 완료 축하, 긴급 취소와 키보드 조작
+- 목표 종료: macOS에서 Tauri 앱이 빌드되고 투명 펫 창·메뉴바 제어가 확인될 때
+- 수정 예정 파일: `package.json`, `src/`, `src-tauri/`, `images/`, `pack/`, `running/`, `docs/17-session-handoff.md`, `docs/13-progress-board.md`
+- 완료 게이트: 기존 소스 이식, macOS 안전 platform adapter, 프런트 테스트·typecheck·build 통과, Rust toolchain 설치 후 Tauri build 통과
 
 ## 오늘 완료
 
@@ -132,6 +132,10 @@
 - [x] 펫 우클릭 메뉴에서 여는 심플한 독립 투두 창과 500ms 지연 정렬 구현
 - [x] 독립 투두 창을 설정·우클릭 메뉴와 같은 WinDbg 리본·명령줄·각진 패널·파란 상태바 디자인으로 통일
 - [x] 기본 펫 점프·광원 축하와 재발동 방지 구현
+- [x] macOS 레포에 기존 Vite/TypeScript/Rust/Tauri 소스와 감자봇·코스튬·사진 배달 자산 복사
+- [x] 앱 이름을 `Desktop Migam Mac`, 패키지명을 `desktop-migam-mac`, 번들 ID를 `com.migam.desktop.mac`으로 변경
+- [x] `infrastructure`를 플랫폼 중립 re-export로 바꾸고 macOS 전경 창/최소화/시스템 metrics 안전 stub 추가
+- [x] 프런트 테스트 25개, TypeScript 검사, Vite production build 통과
 
 ## 다음 작업
 
@@ -245,6 +249,10 @@
 | 2026-08-23 | GAMCHA 중앙 추첨 단순화 | 통과 | 외곽 아이템 DOM·회전 제거, 중앙 코스튬만 교체하며 80~94% 축소 펄스 적용; 프런트 25개·typecheck·build 통과 |
 | 2026-08-23 | GAMCHA 중앙 UI 밀집 배치 | 통과 | 분산된 고정 좌표를 중앙 draw shell로 통합하고 로고·스테이지·아이템 축소, reveal transform 충돌 제거; 프런트 25개·typecheck·build 통과 |
 | 2026-08-23 | GAMCHA 툴바·결과 라벨 정리 | 통과 | 화면 모서리의 티켓·탭·닫기를 중앙 툴바로 통합하고 등급은 좌측, NEW는 우측에 고정해 겹침 방지; 프런트 25개·typecheck·build 통과 |
+| 2026-08-23 | macOS 소스 이식 후 `npm test` | 통과 | 프런트 6개 파일 25개 테스트 통과 |
+| 2026-08-23 | macOS 소스 이식 후 `npm run typecheck` | 통과 | TypeScript 오류 없음 |
+| 2026-08-23 | macOS 소스 이식 후 `npm run build` | 통과 | Vite production build 성공, 감자봇·코스튬 자산 포함 |
+| 2026-08-23 | `npm run tauri -- build --no-bundle` | 차단 | `cargo` 실행 파일 없음: `cargo metadata`를 실행할 수 없음 |
 
 ## 시간 예산
 
@@ -260,10 +268,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: 투두리스트·뽀모도로 핵심 연동 구현 완료, Windows 수동 확인 전
-마지막 성공 검사: 2026-08-23 프런트 25개·Rust 43개·typecheck·fmt·Clippy·production build 통과
-완료한 기능: CRUD·영구 저장·집중 선택·Focus snapshot·정상 종료 선택·500ms 지연 정렬·전체 완료 1회 판정·기본 펫 축하
-다음으로 할 일: 앱 재시작 후 펫 우클릭 `투두리스트`로 독립 창을 열어 핵심 흐름 수동 검증, 이후 고급 축하 연출과 설정 연결
-알려진 위험: 독립 투두 창의 최소 크기·스크롤과 축하 중 다른 펫 행동 중단을 실제 Windows WebView2에서 확인해야 함
-실행/테스트 방법: `. .\scripts\use-project-rust.ps1` 후 README 명령 실행
+현재 상태: macOS 레포에 기존 앱 코드와 자산을 이식했고 프런트 검증은 통과
+마지막 성공 검사: 2026-08-23 `npm test`, `npm run typecheck`, `npm run build` 통과
+완료한 기능: 앱/패키지명 macOS 전용화, 플랫폼 중립 infrastructure re-export, macOS foreground/minimize/system metrics 안전 stub
+다음으로 할 일: Rust toolchain 설치 후 `cargo test`, `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run tauri -- build --no-bundle` 실행
+알려진 위험: macOS 전경 창 감지·창 최소화·시스템 metrics는 아직 안전 stub이며 실제 동작 미구현
+실행/테스트 방법: `npm test`, `npm run typecheck`, `npm run build`; Rust 설치 후 `npm run tauri -- build --no-bundle`
 ```

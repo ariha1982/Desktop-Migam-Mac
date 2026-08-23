@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "character": "gamjabot",
+  "cellWidth": 192,
+  "cellHeight": 208,
+  "displayWidth": 96,
+  "displayHeight": 104,
+  "states": {
+    "dragged": {
+      "frameDurationMs": 130,
+      "loop": true,
+      "frames": [
+        "frames/dragged/00.png",
+        "frames/dragged/01.png",
+        "frames/dragged/02.png",
+        "frames/dragged/03.png"
+      ]
+    },
+    "thrown": {
+      "frameDurationMs": 110,
+      "loop": true,
+      "frames": [
+        "frames/thrown/00.png",
+        "frames/thrown/01.png",
+        "frames/thrown/02.png",
+        "frames/thrown/03.png",
+        "frames/thrown/04.png",
+        "frames/thrown/05.png"
+      ]
+    },
+    "landing": {
+      "frameDurationMs": 100,
+      "loop": false,
+      "frames": [
+        "frames/landing/00.png",
+        "frames/landing/01.png",
+        "frames/landing/02.png",
+        "frames/landing/03.png"
+      ]
+    },
+    "hard-impact": {
+      "frameDurationMs": 1000,
+      "loop": false,
+      "minimumFloorImpactSpeed": 1400,
+      "frames": [
+        "frames/hard-impact/00.png"
+      ]
+    },
+    "focused": {
+      "frameDurationMs": 1000,
+      "loop": false,
+      "sourceWidth": 1186,
+      "sourceHeight": 1327,
+      "displayWidth": 96,
+      "displayHeight": 104,
+      "frames": [
+        "frames/focused/00.png"
+      ]
+    },
+    "kick-helper": {
+      "frameDurationMs": 760,
+      "loop": false,
+      "sourceWidth": 1536,
+      "sourceHeight": 1024,
+      "displayWidth": 210,
+      "displayHeight": 140,
+      "frames": [
+        "frames/kick/00.png"
+      ]
+    }
+  }
+}

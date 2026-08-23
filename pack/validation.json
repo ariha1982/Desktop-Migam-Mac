@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "count": 159,
+  "canvas": [
+    256,
+    256
+  ],
+  "eyeNoiseGuard": "wearer preview excluded from every extracted asset",
+  "resampling": "nearest-neighbor only when an isolated item exceeds bounds",
+  "failures": []
+}

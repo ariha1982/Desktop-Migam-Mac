@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "neutral-geometric-placeholder",
+  "name": "Neutral Geometric Placeholder",
+  "temporary": true,
+  "canvas": {
+    "width": 256,
+    "height": 256
+  },
+  "anchors": {
+    "feet": { "x": 128, "y": 224 },
+    "interaction": { "x": 128, "y": 132 }
+  },
+  "states": {
+    "Idle": { "loop": true, "frames": [{ "path": "idle.svg", "durationMs": 500 }] },
+    "Walk": { "loop": true, "frames": [{ "path": "walk.svg", "durationMs": 180 }] },
+    "Dragged": { "loop": true, "frames": [{ "path": "dragged.svg", "durationMs": 250 }] },
+    "Thrown": { "loop": true, "frames": [{ "path": "thrown.svg", "durationMs": 120 }] },
+    "Kick": { "loop": false, "frames": [{ "path": "kick.svg", "durationMs": 250 }] },
+    "Speak": { "loop": true, "frames": [{ "path": "speak.svg", "durationMs": 300 }] }
+  }
+}

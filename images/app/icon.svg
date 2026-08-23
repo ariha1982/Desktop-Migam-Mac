@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Neutral geometric desktop pet icon">
+  <path fill="#4f46e5" d="M128 16 240 80v96l-112 64L16 176V80z"/>
+  <circle cx="92" cy="120" r="18" fill="#f8fafc"/>
+  <circle cx="164" cy="120" r="18" fill="#f8fafc"/>
+  <path d="M84 168c27 20 61 20 88 0" fill="none" stroke="#f8fafc" stroke-linecap="round" stroke-width="12"/>
+</svg>

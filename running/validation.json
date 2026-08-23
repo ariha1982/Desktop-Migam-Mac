@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "frameCount": 16,
+  "canvas": [
+    256,
+    256
+  ],
+  "stages": {
+    "alert": 4,
+    "medium": 4,
+    "fast": 4,
+    "extreme": 4
+  },
+  "sharedScale": 0.28929068150208626,
+  "feetBaselineY": 232,
+  "eyeNoiseReview": "clean: one solid pupil per eye; sweat stays outside eye regions",
+  "failures": [],
+  "normalization": "per-frame visible bounds, max 236x200, baseline y=232"
+}

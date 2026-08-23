@@ -6,7 +6,19 @@
 
 ## 현재 목표
 
-작업 10 `투두리스트·뽀모도로 연동`의 핵심 MVP는 구현됐다. Windows 수동 검증 후 `docs/18-todo-pomodoro-spec.md`의 고급 축하 연출·설정·긴급 취소를 보강한다.
+macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 macOS용으로 마이그레이션한다. 첫 단계로 기존 Vite/TypeScript/Rust/Tauri 코드와 자산을 복사했고, macOS 안전 stub을 넣어 프런트 검증까지 통과했다.
+
+## 최근 macOS 마이그레이션 작업 요약
+
+- Windows 원본 레포에서 `src`, `src-tauri`, `images`, `pack`, `running`, `costumes`, `draw-picture`, `scripts`와 Vite/TypeScript/package 파일을 `mac/` 레포로 복사했다.
+- 앱 이름을 `Desktop Migam Mac`, npm 패키지명을 `desktop-migam-mac`, Rust crate를 `desktop-migam-mac`/`desktop_migam_mac_lib`, 번들 ID를 `com.migam.desktop.mac`으로 바꿨다.
+- `src-tauri/src/infrastructure/mod.rs`가 플랫폼별 구현을 re-export하도록 바꾸고, macOS용 `foreground_window`와 `system_metrics` 안전 stub을 추가했다.
+- macOS stub은 전경 창을 읽지 않고 `None`을 반환하며, 창 최소화는 실패로 처리하고, CPU/MEM metrics는 0%를 반환한다. 따라서 창 개입은 기본적으로 안전하게 동작하지 않는다.
+- `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
+- `npm test`: 프런트 25개 테스트 통과.
+- `npm run typecheck`: 통과.
+- `npm run build`: Vite production build 통과.
+- `npm run tauri -- build --no-bundle`: `cargo`가 없어 차단됐다. 이 환경에는 `cargo`, `rustc`, `rustup`이 PATH에 없다.
 
 ## 최근 투두리스트·뽀모도로 작업 요약
 
@@ -273,12 +285,11 @@
 
 ## 다음 작업
 
-1. 앱을 완전히 재시작하고 펫 우클릭 메뉴의 `투두리스트`로 독립 창을 연다.
-2. 할 일 추가·수정·완료·삭제·집중 선택과 앱 재시작 복원을 Windows에서 확인한다.
-3. 1분 Focus 정상 종료에서 완료·계속·다음 집중을 각각 확인하고 Skip·Stop 무변경을 확인한다.
-4. 마지막 항목 완료 시 축하 1회, 새 항목 추가 또는 완료 해제 뒤 재발동을 확인한다.
-5. 펫 중앙 안전 이동, 말풍선·색종이·효과음과 움직임 줄이기 설정을 연결한다.
-6. 긴급 중지 시 실행 중 축하를 즉시 취소하도록 연결한다.
+1. macOS Rust toolchain을 설치하거나 PATH에 추가한 뒤 `cargo test`를 실행한다.
+2. `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run tauri -- build --no-bundle`를 실행한다.
+3. Tauri config의 macOS 아이콘 번들 입력이 실제 build에서 허용되는지 확인하고 필요하면 `.icns`를 생성한다.
+4. macOS에서 투명 `pet` 창, always-on-top, 메뉴바 아이콘, 설정/타이머/todo/GAMCHA 창 열기를 수동 확인한다.
+5. 그 다음 macOS visible frame 기반 작업 영역 계산과 실제 시스템 metrics 구현으로 넘어간다.
 
 ## 작업 10 완료 게이트
 
