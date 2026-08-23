@@ -11,12 +11,21 @@ use application::{
 };
 use domain::pomodoro::PomodoroPhase;
 use tauri::{Emitter, Manager};
-#[cfg(windows)]
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 
-#[cfg(windows)]
 fn emergency_shortcut() -> Shortcut {
-    Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::F12)
+    Shortcut::new(Some(emergency_modifiers()), Code::F12)
+}
+
+fn emergency_modifiers() -> Modifiers {
+    #[cfg(target_os = "macos")]
+    {
+        Modifiers::SUPER | Modifiers::SHIFT
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        Modifiers::CONTROL | Modifiers::SHIFT
+    }
 }
 
 pub fn run() {
@@ -106,31 +115,26 @@ pub fn run() {
             app.state::<AppState>()
                 .tray_available
                 .store(tray_available, std::sync::atomic::Ordering::SeqCst);
-            #[cfg(windows)]
-            {
-                let plugin_available = app
-                    .handle()
-                    .plugin(
-                        tauri_plugin_global_shortcut::Builder::new()
-                            .with_handler(|app, shortcut, event| {
-                                if event.state() == ShortcutState::Pressed
-                                    && shortcut
-                                        .matches(Modifiers::CONTROL | Modifiers::SHIFT, Code::F12)
-                                {
-                                    let state = app.state::<AppState>();
-                                    let _ =
-                                        presentation::commands::emergency_stop(app.clone(), state);
-                                }
-                            })
-                            .build(),
-                    )
-                    .is_ok();
-                let registered = plugin_available
-                    && app.global_shortcut().register(emergency_shortcut()).is_ok();
-                app.state::<AppState>()
-                    .emergency_shortcut_available
-                    .store(registered, std::sync::atomic::Ordering::SeqCst);
-            }
+            let plugin_available = app
+                .handle()
+                .plugin(
+                    tauri_plugin_global_shortcut::Builder::new()
+                        .with_handler(|app, shortcut, event| {
+                            if event.state() == ShortcutState::Pressed
+                                && shortcut.matches(emergency_modifiers(), Code::F12)
+                            {
+                                let state = app.state::<AppState>();
+                                let _ = presentation::commands::emergency_stop(app.clone(), state);
+                            }
+                        })
+                        .build(),
+                )
+                .is_ok();
+            let registered =
+                plugin_available && app.global_shortcut().register(emergency_shortcut()).is_ok();
+            app.state::<AppState>()
+                .emergency_shortcut_available
+                .store(registered, std::sync::atomic::Ordering::SeqCst);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

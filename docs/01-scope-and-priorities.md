@@ -2,7 +2,7 @@
 
 ## P0 — 반드시 완성
 
-- Node.js, Rust, WebView2와 Windows C++ build tools 확인
+- Node.js, Rust, Xcode와 macOS SDK 확인
 - Tauri 2 + Vite + 순수 TypeScript 프로젝트 신규 생성
 - Tauri 트레이와 투명 펫 창
 - Idle, Walk, 방향 전환
@@ -23,7 +23,7 @@
 - 춤
 - 클릭 반응과 10초 내 7회 이스터에그
 - 집중 중 비활동 경고와 순수 발차기 연출
-- Windows 알림
+- macOS 알림
 
 신규 개발에서는 P1을 기본 일정에 넣지 않는다. P0 release 빌드가 20시간 이전에 성공한 경우에만 최대 1개를 선택한다.
 
@@ -38,7 +38,7 @@
 
 ## 이번 개발에서 제외
 
-- macOS, Linux, Windows 10
+- Windows, Linux, Intel Mac 배포 산출물
 - 계정, 동기화, 분석, 온라인 상점
 - 브라우저 확장 또는 URL 감시
 - 네트워크 차단과 앱 강제 종료

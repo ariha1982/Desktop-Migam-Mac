@@ -36,7 +36,7 @@ export async function mountPetContextMenu(container: HTMLElement): Promise<() =>
         <button type="button" data-action="stop"><kbd>■</kbd><span>타이머 중지</span><small>STOP</small></button>
         <div class="pet-command-separator"></div>
         <button type="button" data-action="settings"><kbd>⚙</kbd><span>설정</span><small>CONFIG</small></button>
-        <button type="button" data-action="emergency" class="danger"><kbd>!</kbd><span>긴급 중지</span><small>CTRL+SHIFT+F12</small></button>
+        <button type="button" data-action="emergency" class="danger"><kbd>!</kbd><span>긴급 중지</span><small>CMD+SHIFT+F12</small></button>
         <button type="button" data-action="restart"><kbd>↻</kbd><span>펫 다시 시작</span><small>RESET</small></button>
         <div class="pet-command-separator"></div>
         <button type="button" data-action="quit"><kbd>×</kbd><span>종료</span><small>EXIT</small></button>

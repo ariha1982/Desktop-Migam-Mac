@@ -283,6 +283,13 @@ impl ForegroundMonitor {
     fn is_protected(&self, snapshot: &WindowSnapshot) -> bool {
         const PROTECTED: &[&str] = &[
             "desktop-pet-mvp.exe",
+            "Desktop Migam Mac",
+            "Dock",
+            "Finder",
+            "loginwindow",
+            "System Settings",
+            "SystemUIServer",
+            "WindowServer",
             "taskmgr.exe",
             "explorer.exe",
             "dwm.exe",

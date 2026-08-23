@@ -1,24 +1,29 @@
 # 세션 인수인계
 
-최종 갱신: 2026-08-23
+최종 갱신: 2026-08-24
 
 이 문서는 다음 작업 세션이 가장 먼저 확인하는 단일 인수인계 기록이다. 작업을 끝낼 때마다 오래된 내용을 남기지 말고 현재 상태로 갱신한다.
 
 ## 현재 목표
 
-macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 macOS용으로 마이그레이션한다. 첫 단계로 기존 Vite/TypeScript/Rust/Tauri 코드와 자산을 복사했고, macOS 안전 stub을 넣어 프런트 검증까지 통과했다.
+macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 macOS용으로 마이그레이션한다. 네이티브 어댑터와 Apple Silicon `.app`·DMG 빌드까지 완료했고 일반 사용자 화면의 동작·권한 수동 검증이 남았다.
 
 ## 최근 macOS 마이그레이션 작업 요약
 
 - Windows 원본 레포에서 `src`, `src-tauri`, `images`, `pack`, `running`, `costumes`, `draw-picture`, `scripts`와 Vite/TypeScript/package 파일을 `mac/` 레포로 복사했다.
 - 앱 이름을 `Desktop Migam Mac`, npm 패키지명을 `desktop-migam-mac`, Rust crate를 `desktop-migam-mac`/`desktop_migam_mac_lib`, 번들 ID를 `com.migam.desktop.mac`으로 바꿨다.
-- `src-tauri/src/infrastructure/mod.rs`가 플랫폼별 구현을 re-export하도록 바꾸고, macOS용 `foreground_window`와 `system_metrics` 안전 stub을 추가했다.
-- macOS stub은 전경 창을 읽지 않고 `None`을 반환하며, 창 최소화는 실패로 처리하고, CPU/MEM metrics는 0%를 반환한다. 따라서 창 개입은 기본적으로 안전하게 동작하지 않는다.
+- `src-tauri/src/infrastructure/mod.rs`가 플랫폼별 구현을 re-export하고, macOS `foreground_window`는 AppKit·CoreGraphics로 전면 앱과 최상위 창을 읽는다.
+- 최소화는 fresh window ID를 다시 검증한 뒤 macOS Accessibility의 focused window에 `AXMinimized`를 설정한다. 손쉬운 사용 권한이 없으면 `AccessDenied`로 안전하게 건너뛴다.
+- `system_metrics`는 sysinfo로 macOS 전체 CPU·메모리를 읽고 기존 750ms cache와 CPU smoothing을 유지한다.
+- 전역 긴급 중지를 macOS `Cmd+Shift+F12`로 등록하고 UI 안내를 macOS 용어로 변경했다.
+- 감자봇 원본에서 `.icns`를 생성해 번들 설정에 연결했다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
 - `npm run build`: Vite production build 통과.
-- `npm run tauri -- build --no-bundle`: `cargo`가 없어 차단됐다. 이 환경에는 `cargo`, `rustc`, `rustup`이 PATH에 없다.
+- Rust 1.98 stable을 설치했고 `cargo test` 46개, rustfmt, Clippy `-D warnings`가 통과했다.
+- `npm run tauri -- build --no-bundle`과 전체 bundle build가 통과했다.
+- `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg`를 생성했고 번들 앱 프로세스 실행을 확인했다.
 
 ## 최근 투두리스트·뽀모도로 작업 요약
 
@@ -270,6 +275,10 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 
 ## 차단 요소와 위험
 
+- macOS 화면 기록 권한이 없으면 다른 앱의 창 제목이 비어 제목 기반 규칙이 매치되지 않을 수 있다. 프로세스 이름 규칙은 계속 사용할 수 있다.
+- macOS 손쉬운 사용 권한이 없으면 방해 창 최소화는 안전하게 실패한다. 개입은 기본 off다.
+- 번들 앱은 Apple Developer ID 서명·공증을 아직 하지 않은 개발 산출물이다.
+- 자동 화면 캡처는 화면 기록 권한 부재로 실패했다. 투명 펫 창, always-on-top, 메뉴 막대 아이콘과 각 유틸리티 창은 사용자 화면에서 확인해야 한다.
 - 일반 사용자 데스크톱에서 감자봇 외 배경이 완전히 투명한지 확인해야 한다.
 - 단일 모니터에서 작업표시줄을 침범하지 않는지, 가능한 경우 보조 모니터/다른 DPI에서도 확인해야 한다.
 - 설정의 `visualScalePercent`는 아직 실제 펫 창/스프라이트 크기에 적용되지 않는다.
@@ -285,11 +294,11 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 
 ## 다음 작업
 
-1. macOS Rust toolchain을 설치하거나 PATH에 추가한 뒤 `cargo test`를 실행한다.
-2. `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run tauri -- build --no-bundle`를 실행한다.
-3. Tauri config의 macOS 아이콘 번들 입력이 실제 build에서 허용되는지 확인하고 필요하면 `.icns`를 생성한다.
-4. macOS에서 투명 `pet` 창, always-on-top, 메뉴바 아이콘, 설정/타이머/todo/GAMCHA 창 열기를 수동 확인한다.
-5. 그 다음 macOS visible frame 기반 작업 영역 계산과 실제 시스템 metrics 구현으로 넘어간다.
+1. 일반 사용자 화면에서 투명 `pet` 창, always-on-top, 메뉴 막대 아이콘, 설정/타이머/todo/GAMCHA 창 열기를 확인한다.
+2. 단일 Retina와 가능하면 보조 모니터에서 걷기·드래그·던지기·작업 영역 경계를 확인한다.
+3. 화면 기록 권한 전후로 `Google Chrome` 프로세스 규칙과 창 제목 규칙을 확인한다.
+4. 손쉬운 사용 권한 전후로 최소화가 각각 안전 실패·성공하는지 확인하고 `Cmd+Shift+F12` 긴급 중지를 누른다.
+5. 수동 검증 뒤 필요하면 CoreGraphics 논리 좌표와 Tauri physical 좌표의 Retina/mixed-DPI 변환을 보정한다.
 
 ## 작업 10 완료 게이트
 

@@ -131,6 +131,6 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": ["../images/app/icon-source.png", "../images/app/icon.svg"]
+    "icon": ["../images/app/icon.icns"]
   }
 }

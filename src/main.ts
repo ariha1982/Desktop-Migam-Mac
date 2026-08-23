@@ -141,7 +141,7 @@ function ruleRows(rules: DistractionRule[]): string {
             <button class="danger-text" type="button" data-remove-rule="${escaped(rule.id)}">삭제</button>
           </div>
           <label>규칙 이름<input name="rule-${index}-name" type="text" maxlength="60" value="${escaped(rule.name)}" required /></label>
-          <label>프로세스 파일명<input name="rule-${index}-process" type="text" maxlength="120" placeholder="chrome.exe" value="${escaped(rule.processName ?? "")}" /></label>
+          <label>프로세스 이름<input name="rule-${index}-process" type="text" maxlength="120" placeholder="Google Chrome" value="${escaped(rule.processName ?? "")}" /></label>
           <label class="wide-field">창 제목에 포함<input name="rule-${index}-title" type="text" maxlength="200" placeholder="YouTube" value="${escaped(rule.windowTitle ?? "")}" /></label>
           <label>유예 시간(초)<input name="rule-${index}-grace" type="number" min="5" max="600" value="${rule.graceSeconds}" required /></label>
           <label>재감지 대기(초)<input name="rule-${index}-cooldown" type="number" min="30" max="3600" value="${rule.cooldownSeconds}" required /></label>
@@ -182,7 +182,7 @@ function renderSettings(
         <div class="debug-pane-title"><span>DesktopPet.Settings</span><span aria-hidden="true">×</span></div>
         <div class="debug-command-line" aria-hidden="true"><span>0:000&gt;</span><span>.settings /local /schema:${settings.schemaVersion}</span><span class="debug-caret">_</span></div>
         <div class="settings-heading"><div><p class="eyebrow">DESKTOP PET CONFIGURATION</p><h1>설정</h1></div><span class="debug-build">LOCAL · SCHEMA ${settings.schemaVersion}</span></div>
-        ${emergencyShortcutAvailable ? "" : '<p class="warning" role="alert">Ctrl+Shift+F12 긴급 중지 단축키를 등록하지 못했습니다. 트레이의 긴급 중지 메뉴를 사용해 주세요.</p>'}
+        ${emergencyShortcutAvailable ? "" : '<p class="warning" role="alert">Cmd+Shift+F12 긴급 중지 단축키를 등록하지 못했습니다. 메뉴 막대의 긴급 중지 메뉴를 사용해 주세요.</p>'}
         ${trayAvailable ? "" : '<p class="warning" role="alert">시스템 트레이를 사용할 수 없습니다. 앱 창을 닫으면 복구 메뉴에 접근하지 못할 수 있습니다.</p>'}
         <form id="settings-form">
         <fieldset>
@@ -219,7 +219,7 @@ function renderSettings(
           <div class="actions"><button type="submit">설정 적용</button><span id="save-status" role="status"></span></div>
         </form>
       </section>
-      <div class="debug-statusbar"><span>Configuration ready</span><span>Ctrl+Shift+F12 · EMERGENCY STOP</span></div>
+      <div class="debug-statusbar"><span>Configuration ready</span><span>Cmd+Shift+F12 · EMERGENCY STOP</span></div>
     </main>
   `;
 

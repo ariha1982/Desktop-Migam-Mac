@@ -1,22 +1,22 @@
 # 13. 진행 현황판
 
-최종 갱신: 2026-08-23
-현재 단계: macOS 마이그레이션 시작, 기존 Tauri 앱 소스와 자산 이식
-전체 상태: README·문서 시드 레포에서 기존 Vite/TypeScript/Rust/Tauri 코드와 자산을 복사했고, macOS 안전 stub으로 프런트 빌드까지 통과
+최종 갱신: 2026-08-24
+현재 단계: macOS 네이티브 어댑터와 Apple Silicon 배포 번들 검증
+전체 상태: AppKit·CoreGraphics 전면 창 감지, Accessibility 최소화, 실제 CPU/MEM 수집, macOS 긴급 단축키를 연결했고 `.app`·`.dmg` 빌드와 실행 프로세스를 확인
 
 ## 단계별 상태
 
 | 단계 | 상태 | 시작 | 완료 | 담당 | 결과/링크 |
 |---|---|---|---|---|---|
-| 0. 환경 확인·프로젝트 생성 | 진행 중 | 2026-08-23 |  | Codex | Node/npm, Tauri CLI, Vite build 확인; Rust/Cargo 미설치로 Tauri Rust 빌드 차단 |
-| 1. 앱 셸 | 진행 중 | 2026-08-23 |  | Codex | 기존 다중 창·메뉴바/트레이 코드 이식, macOS 투명 창 수동 확인 필요 |
+| 0. 환경 확인·프로젝트 생성 | 완료 | 2026-08-23 | 2026-08-24 | Codex | Xcode 21, Apple Silicon, Node/npm, Rust 1.98, Tauri CLI와 release build 확인 |
+| 1. 앱 셸 | 진행 중 | 2026-08-23 |  | Codex | 다중 창·메뉴 막대·macOS `.app`/DMG 생성과 앱 프로세스 실행 확인; 투명 창 육안 확인 필요 |
 | 2. 설정 | 진행 중 | 2026-08-23 |  | Codex | 저장·복구 테스트 통과, UI 재실행 복원 수동 확인 필요 |
 | 3. 펫 이동 | 진행 중 | 2026-08-23 |  | Codex | 감자봇 v2 atlas, Idle/Walk, work area clamp와 단위 테스트 완료; Windows 수동 게이트 대기 |
 | 4. 클릭·드래그·던지기 | 진행 중 | 2026-08-23 |  | Codex | pointer capture, 속도 판정, 중력·반동·마찰·3초 제한 구현; Windows 수동 게이트 대기 |
 | 5. 뽀모도로 | 완료 | 2026-08-23 | 2026-08-23 | Codex | Rust 상태 머신·1초 ticker·Tauri 명령·TypeScript 타이머 UI 및 상태별 버튼 배열 완료 |
-| 6. 전경 창과 규칙 | 완료 | 2026-08-23 | 2026-08-23 | Codex | 규칙 UI·저장과 Focus 전용 Win32 일치/불일치 실제 브라우저 검증 완료 |
-| 7. 안전한 개입 | 진행 중 | 2026-08-23 |  | Codex | 화면 왼쪽 비행 Kick, grace/cooldown, fresh foreground 재검증과 1회 최소화 구현; Windows 수동 게이트 대기 |
-| 8. 긴급 중지 | 대기 |  |  |  |  |
+| 6. 전경 창과 규칙 | 진행 중 | 2026-08-23 |  | Codex | AppKit frontmost app과 CoreGraphics 창 제목·위치 감지 구현; 실제 권한별 수동 검증 필요 |
+| 7. 안전한 개입 | 진행 중 | 2026-08-23 |  | Codex | fresh 창 ID 재검증 후 Accessibility focused window 최소화 구현; 손쉬운 사용 권한 수동 게이트 대기 |
+| 8. 긴급 중지 | 진행 중 | 2026-08-24 |  | Codex | macOS `Cmd+Shift+F12` 등록 구현과 컴파일 완료; 실제 키 입력 확인 필요 |
 | 9. P1 선택 기능 | 진행 중 | 2026-08-23 |  | Codex | GAMCHA 티켓·룰렛·컬렉션 구현, 코스튬 착용과 Windows 수동 확인 대기 |
 | 10. 투두·뽀모도로 연동 | 진행 중 | 2026-08-23 |  | Codex | 핵심 MVP·자동 검사 완료, Windows 수동 검증과 고급 축하 설정 대기 |
 | A. 사진 배달 연출 | 완료 | 2026-08-23 | 2026-08-23 | Codex | 4장 무작위 선택, Desktop Goose식 힘겨운 당김, 화면 전체 무작위 배치, 사용자 X 닫기 |
@@ -26,13 +26,21 @@
 
 ## 현재 작업
 
-- 작업: macOS 앱 셸 마이그레이션 시작
+- 작업: macOS 네이티브 기능과 배포 번들 마이그레이션
 - 시작 시각: 2026-08-23
 - 목표 종료: macOS에서 Tauri 앱이 빌드되고 투명 펫 창·메뉴바 제어가 확인될 때
 - 수정 예정 파일: `package.json`, `src/`, `src-tauri/`, `images/`, `pack/`, `running/`, `docs/17-session-handoff.md`, `docs/13-progress-board.md`
-- 완료 게이트: 기존 소스 이식, macOS 안전 platform adapter, 프런트 테스트·typecheck·build 통과, Rust toolchain 설치 후 Tauri build 통과
+- 완료 게이트: 기존 소스 이식, 실제 macOS platform adapter, 전체 자동 검사, Apple Silicon `.app`·DMG 빌드와 실행 확인
 
 ## 오늘 완료
+
+- [x] Xcode가 설치된 Apple Silicon Mac에 Rust 1.98 stable 툴체인 구성
+- [x] AppKit·CoreGraphics 기반 전면 앱/창 이름·제목·좌표·전체 화면 감지 구현
+- [x] macOS Accessibility API 기반 창 최소화 구현, 권한이 없으면 안전하게 거부
+- [x] macOS 실제 CPU·메모리 사용률 수집과 기존 메뉴 막대 게이지·펫 반응 연결
+- [x] 긴급 중지 단축키를 macOS `Cmd+Shift+F12`로 등록
+- [x] 감자봇 `.icns` 생성과 Tauri macOS 번들 설정 적용
+- [x] Apple Silicon `.app`·14MB DMG 생성 및 번들 앱 프로세스 실행 확인
 
 - [x] Git에서 누락된 `final/spritesheet-extended.webp` 참조를 추적 중인 원본 아틀라스로 교체하고 NSIS 설치 EXE 생성 검증
 - [x] NSIS 설치·제거 프로그램 아이콘을 청록색 감자봇 얼굴 ICO로 명시하고 설치 EXE 재생성
@@ -253,6 +261,11 @@
 | 2026-08-23 | macOS 소스 이식 후 `npm run typecheck` | 통과 | TypeScript 오류 없음 |
 | 2026-08-23 | macOS 소스 이식 후 `npm run build` | 통과 | Vite production build 성공, 감자봇·코스튬 자산 포함 |
 | 2026-08-23 | `npm run tauri -- build --no-bundle` | 차단 | `cargo` 실행 파일 없음: `cargo metadata`를 실행할 수 없음 |
+| 2026-08-24 | macOS 네이티브 어댑터 전체 Rust 검사 | 통과 | Rust 46개 테스트, rustfmt, Clippy `-D warnings` 통과 |
+| 2026-08-24 | macOS 프런트 전체 검사 | 통과 | 프런트 25개 테스트, TypeScript typecheck, Vite production build 통과 |
+| 2026-08-24 | `npm run tauri -- build --no-bundle` | 통과 | Apple Silicon release 실행 파일 생성 |
+| 2026-08-24 | `npm run tauri -- build` | 통과 | `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg` 생성 |
+| 2026-08-24 | macOS 번들 앱 실행 | 부분 통과 | PID 38958로 프로세스 유지 확인; 화면 캡처 권한 부재로 투명 창 육안 자동 검증 불가 |
 
 ## 시간 예산
 
@@ -268,10 +281,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 레포에 기존 앱 코드와 자산을 이식했고 프런트 검증은 통과
-마지막 성공 검사: 2026-08-23 `npm test`, `npm run typecheck`, `npm run build` 통과
-완료한 기능: 앱/패키지명 macOS 전용화, 플랫폼 중립 infrastructure re-export, macOS foreground/minimize/system metrics 안전 stub
-다음으로 할 일: Rust toolchain 설치 후 `cargo test`, `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run tauri -- build --no-bundle` 실행
-알려진 위험: macOS 전경 창 감지·창 최소화·시스템 metrics는 아직 안전 stub이며 실제 동작 미구현
-실행/테스트 방법: `npm test`, `npm run typecheck`, `npm run build`; Rust 설치 후 `npm run tauri -- build --no-bundle`
+현재 상태: macOS 네이티브 전면 창·최소화·시스템 metrics·긴급 단축키 구현과 Apple Silicon 배포 번들 생성 완료
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 46개 테스트, typecheck, build, rustfmt, Clippy, Tauri `.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, sysinfo CPU/MEM, Cmd+Shift+F12, ICNS, 앱/DMG 번들
+다음으로 할 일: 일반 사용자 화면에서 투명도·메뉴 막대·창 열기·드래그/던지기와 권한 부여 전후 방해 창 감지·최소화를 수동 확인
+알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; 개발 앱은 미서명·미공증
+실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
 ```

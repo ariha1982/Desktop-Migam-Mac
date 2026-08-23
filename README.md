@@ -1,56 +1,44 @@
-# 미친감자 Desktop Pet MVP
+# 미친감자 Desktop Migam Mac
 
-Windows 11 전용 Tauri 2 + Rust + 순수 TypeScript 투명 오버레이 데스크톱 펫 프로젝트입니다. 감자봇이 바탕화면을 돌아다니고, 사용자가 드래그하거나 던질 수 있으며, 뽀모도로 집중 세션과 방해 창 개입 기능을 제공하는 것을 목표로 합니다.
+macOS용 Tauri 2 + Rust + 순수 TypeScript 데스크톱 펫입니다. 감자봇이 작업 영역을 돌아다니고, 드래그·던지기·뽀모도로·할 일·GAMCHA·사진 배달·시스템 부하 반응을 제공합니다.
 
-현재 앱 코드는 MVP 골격을 구현 중이며, 캐릭터 원화·애니메이션 결과물과 개발 명세를 함께 보관합니다.
+## 주요 기능
 
-## 저장소 구조
+- 투명 always-on-top 펫 창과 macOS 메뉴 막대 제어
+- Idle, Walk, Dragged, Thrown, Landing, Hard Impact 애니메이션
+- 뽀모도로와 할 일 연동, 코스튬 수집·착용
+- CPU·메모리 사용률에 따른 움직임과 메뉴 막대 표시
+- 집중 중 전면 앱/창 규칙 감지와 사용자 승인 기반 최소화
+- `Cmd+Shift+F12` 긴급 중지
 
-```text
-.
-├─ src/                         # TypeScript 오버레이 UI
-├─ src-tauri/                   # Tauri 2 + Rust 애플리케이션
-├─ images/
-│  ├─ app/                      # 앱 아이콘과 임시 실행용 캐릭터
-│  ├─ characters/
-│  │  ├─ gamjabot/              # 감자봇 원본·프레임·아틀라스·QA 자료
-│  │  └─ nemo/                  # 네모 원본·프레임·아틀라스·QA 자료
-│  └─ references/               # Stitch 캐릭터 디자인 참고 이미지
-└─ docs/                        # 제품 명세, 구현 계획, 안전·테스트 문서
-```
-
-## MVP 핵심 범위
-
-- 투명 오버레이 펫의 걷기, 드래그, 던지기
-- 말하기, 춤, 클릭 이스터에그 등 랜덤 반응
-- 사용자 설정 가능한 뽀모도로 타이머
-- 집중 중 방해 앱 감지, 발차기 애니메이션 후 대상 창 최소화
-- 긴급 중지 단축키와 보수적인 Windows 창 보호 규칙
-- 교체 가능한 캐릭터 팩과 후속 `네모` 이스터에그 확장 지점
-
-상세 제품·기술 기준은 [개발 문서 색인](docs/README.md)과 [Windows 데스크톱 펫 MVP 설계](docs/superpowers/specs/2026-08-23-windows-desktop-pet-mvp-design.md)를 참고하세요.
+창 개입은 기본적으로 꺼져 있습니다. 프로세스 이름만 사용하는 규칙은 별도 권한 없이 동작하지만, 다른 앱의 창 제목을 읽으려면 화면 기록 권한이 필요할 수 있고 창을 최소화하려면 시스템 설정의 개인정보 보호 및 보안 > 손쉬운 사용에서 앱 권한을 허용해야 합니다. 권한이나 창 정보가 불확실하면 앱은 해당 창을 조작하지 않습니다.
 
 ## 개발
 
-```powershell
+요구 사항은 macOS, Xcode Command Line Tools, Node.js, Rust stable입니다. Homebrew의 `rustup`을 사용한다면 현재 셸에서 다음 경로를 먼저 추가합니다.
+
+```sh
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 npm install
-. .\scripts\use-project-rust.ps1
 npm run tauri -- dev
 ```
 
-## 검증
+## 검증과 빌드
 
-```powershell
-npm run typecheck
+```sh
 npm test
-Set-Location src-tauri
-cargo check --workspace
+npm run typecheck
+npm run build
+
+cd src-tauri
+cargo test
+cargo fmt -- --check
+cargo clippy --all-targets -- -D warnings
+cd ..
+
+npm run tauri -- build
 ```
 
-집중 방해 창 최소화는 사용자가 명시적으로 활성화해야 하며, 긴급 중지 단축키는 `Ctrl+Shift+F12`를 기준으로 합니다.
+Apple Silicon 산출물은 `src-tauri/target/release/bundle/macos/Desktop Migam Mac.app`과 `src-tauri/target/release/bundle/dmg/Desktop Migam Mac_0.1.0_aarch64.dmg`에 생성됩니다. 현재 개발 빌드는 서명·공증되지 않았습니다.
 
-## 현재 상태
-
-- 설정·뽀모도로·방해 규칙 도메인 모델: 구현 중
-- Windows 오버레이와 창 개입: 후속 구현 필요
-- 감자봇·네모 v2 아틀라스: 정적 검증 완료, 최종 시각 QA 필요
+프로젝트 구조와 상세 기록은 [개발 문서 색인](docs/README.md), [진행 현황판](docs/13-progress-board.md), [세션 인수인계](docs/17-session-handoff.md)를 참고하세요. 기존 Windows 설계 문서는 원본 구현의 역사 자료로 유지합니다.
