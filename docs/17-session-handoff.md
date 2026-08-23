@@ -17,6 +17,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - `system_metrics`는 sysinfo로 macOS 전체 CPU·메모리를 읽고 기존 750ms cache와 CPU smoothing을 유지한다.
 - 전역 긴급 중지를 macOS `Cmd+Shift+F12`로 등록하고 UI 안내를 macOS 용어로 변경했다.
 - 감자봇 원본에서 `.icns`를 생성해 번들 설정에 연결했다.
+- macOS에서는 `transparent: true`만으로 WKWebView 배경이 투명해지지 않아 흰 사각형이 표시됐다. `app.macOSPrivateApi: true`와 투명 창별 `backgroundColor: #00000000`을 추가했다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
@@ -278,6 +279,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - macOS 화면 기록 권한이 없으면 다른 앱의 창 제목이 비어 제목 기반 규칙이 매치되지 않을 수 있다. 프로세스 이름 규칙은 계속 사용할 수 있다.
 - macOS 손쉬운 사용 권한이 없으면 방해 창 최소화는 안전하게 실패한다. 개입은 기본 off다.
 - 번들 앱은 Apple Developer ID 서명·공증을 아직 하지 않은 개발 산출물이다.
+- 투명 WKWebView를 위해 Tauri `macOSPrivateApi`를 사용하므로 Mac App Store에는 배포할 수 없다. GitHub DMG 직접 배포 경로를 유지한다.
 - 자동 화면 캡처는 화면 기록 권한 부재로 실패했다. 투명 펫 창, always-on-top, 메뉴 막대 아이콘과 각 유틸리티 창은 사용자 화면에서 확인해야 한다.
 - 일반 사용자 데스크톱에서 감자봇 외 배경이 완전히 투명한지 확인해야 한다.
 - 단일 모니터에서 작업표시줄을 침범하지 않는지, 가능한 경우 보조 모니터/다른 DPI에서도 확인해야 한다.

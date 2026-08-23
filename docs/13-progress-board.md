@@ -34,6 +34,7 @@
 
 ## 오늘 완료
 
+- [x] macOS WKWebView 투명 배경에 필요한 `macOSPrivateApi`와 창별 alpha 0 배경색을 적용해 흰 사각 창 수정
 - [x] Xcode가 설치된 Apple Silicon Mac에 Rust 1.98 stable 툴체인 구성
 - [x] AppKit·CoreGraphics 기반 전면 앱/창 이름·제목·좌표·전체 화면 감지 구현
 - [x] macOS Accessibility API 기반 창 최소화 구현, 권한이 없으면 안전하게 거부
@@ -266,6 +267,8 @@
 | 2026-08-24 | `npm run tauri -- build --no-bundle` | 통과 | Apple Silicon release 실행 파일 생성 |
 | 2026-08-24 | `npm run tauri -- build` | 통과 | `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg` 생성 |
 | 2026-08-24 | macOS 번들 앱 실행 | 부분 통과 | PID 38958로 프로세스 유지 확인; 화면 캡처 권한 부재로 투명 창 육안 자동 검증 불가 |
+| 2026-08-24 | macOS 투명 창 수정 후 프런트 검사 | 통과 | 프런트 25개 테스트와 TypeScript typecheck 통과 |
+| 2026-08-24 | macOS 투명 창 수정 후 Tauri build | 통과 | `macos-private-api` 적용 상태로 release 실행 파일, `.app`, Apple Silicon DMG 재생성 |
 
 ## 시간 예산
 
@@ -281,10 +284,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 네이티브 전면 창·최소화·시스템 metrics·긴급 단축키 구현과 Apple Silicon 배포 번들 생성 완료
-마지막 성공 검사: 2026-08-24 프런트 25개·Rust 46개 테스트, typecheck, build, rustfmt, Clippy, Tauri `.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, sysinfo CPU/MEM, Cmd+Shift+F12, ICNS, 앱/DMG 번들
+현재 상태: macOS 네이티브 기능과 WKWebView 투명 창 수정, Apple Silicon 배포 번들 생성 완료
+마지막 성공 검사: 2026-08-24 프런트 25개 테스트, typecheck, Tauri release 실행 파일·`.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics 전면 창 감지, Accessibility 최소화, sysinfo CPU/MEM, Cmd+Shift+F12, ICNS, macOS 투명 창, 앱/DMG 번들
 다음으로 할 일: 일반 사용자 화면에서 투명도·메뉴 막대·창 열기·드래그/던지기와 권한 부여 전후 방해 창 감지·최소화를 수동 확인
-알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; 개발 앱은 미서명·미공증
+알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
 실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
 ```
