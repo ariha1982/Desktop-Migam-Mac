@@ -20,14 +20,14 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 - macOS에서는 `transparent: true`만으로 WKWebView 배경이 투명해지지 않아 흰 사각형이 표시됐다. `app.macOSPrivateApi: true`와 투명 창별 `backgroundColor: #00000000`을 추가했다.
 - 사진 배달 감자펫이 macOS WebKit에서 보이지 않아 런타임 `blob:` CSS 배경을 제거하고 투명화 결과를 600×200 canvas에 직접 그려 4프레임을 재생하도록 변경했다.
 - 집중 보호 설정에 화면 기록·손쉬운 사용 권한 상태와 요청 버튼을 추가했다. `NAVER Whale`/`Whale` 및 Windows/macOS Chrome·Edge 실행 이름은 제한된 알려진 별칭으로 정규화한다.
-- AX focused window와 CoreGraphics frame은 최대 8px 차이를 허용하지만, 개입 직전 전경 window ID·PID·규칙 일치 재검증은 유지한다.
-- 후속 사용자 검증에서 최소화가 여전히 동작하지 않아 Kick 창이 전면 앱을 점유할 때 그 아래 최상위 외부 창을 재검증하도록 분리했다. `AXFocusedWindow`가 없거나 geometry가 다르면 같은 앱의 `AXWindows` 목록에서 일치 창을 찾는다.
+- 개입 직전 전경 window ID·PID·규칙 일치 재검증을 유지한다. Kick 창이 전면 앱을 점유할 때는 그 아래 최상위 외부 창을 재검증한다.
+- 후속 사용자 검증에서 Whale의 CoreGraphics frame과 Accessibility frame 차이 때문에 정확한 창을 찾지 못하는 문제가 확인됐다. `AXFocusedWindow`와 `AXWindows`의 각 AX 창에서 `_AXUIElementGetWindow`로 실제 `CGWindowID`를 얻어 대상 ID와 직접 대조하며, 해당 API가 실패하는 환경에서만 8px geometry 비교를 보조 경로로 사용한다.
 - Kick 웹뷰의 위치 이동이나 이벤트 처리가 실패해도 Rust가 1.2초 뒤 pending 개입을 다시 fresh 검증하고 완료한다. 설정 화면은 `minimized`, 권한 거부, 대상 변경, 검사 실패 결과를 비민감 문구로 표시한다.
 - `npm install`은 샌드박스 DNS 차단 뒤 네트워크 승인으로 성공했다.
 - `npm test`: 프런트 25개 테스트 통과.
 - `npm run typecheck`: 통과.
 - `npm run build`: Vite production build 통과.
-- Rust 1.98 stable을 설치했고 현재 `cargo test` 48개, rustfmt, Clippy `-D warnings`가 통과했다.
+- Rust 1.98 stable을 설치했고 현재 `cargo test` 49개, rustfmt, Clippy `-D warnings`가 통과했다.
 - `npm run tauri -- build --no-bundle`과 전체 bundle build가 통과했다.
 - `Desktop Migam Mac.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg`를 생성했고 번들 앱 프로세스 실행을 확인했다.
 
@@ -281,7 +281,7 @@ macOS 전용 별도 레포 `Desktop-Migam-Mac`에서 기존 Desktop Pet MVP를 m
 
 ## 차단 요소와 위험
 
-- 새 사진 배달 canvas와 권한 허용 후 Whale/YouTube 최소화는 일반 사용자 화면에서 최종 확인해야 한다.
+- 새 사진 배달 canvas와 권한 허용 후 `CGWindowID` 직접 대조를 적용한 Whale/YouTube 최소화는 일반 사용자 화면에서 최종 확인해야 한다.
 - 화면 기록 또는 손쉬운 사용 권한을 새로 허용한 뒤 macOS가 요구하면 앱을 완전히 종료하고 다시 실행해야 한다.
 - macOS 화면 기록 권한이 없으면 다른 앱의 창 제목이 비어 제목 기반 규칙이 매치되지 않을 수 있다. 프로세스 이름 규칙은 계속 사용할 수 있다.
 - macOS 손쉬운 사용 권한이 없으면 방해 창 최소화는 안전하게 실패한다. 개입은 기본 off다.

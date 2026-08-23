@@ -46,6 +46,7 @@ unsafe extern "C" {
         attribute: CFStringRef,
         value: CFTypeRef,
     ) -> AXError;
+    fn _AXUIElementGetWindow(element: AXUIElementRef, window_id: *mut u32) -> AXError;
     fn AXValueGetValue(value: AXValueRef, value_type: i32, output: *mut c_void) -> u8;
     fn CFArrayGetCount(array: CFArrayRef) -> CFIndex;
     fn CFArrayGetValueAtIndex(array: CFArrayRef, index: CFIndex) -> *const c_void;
@@ -207,7 +208,11 @@ impl WindowMinimizer for PlatformWindowMinimizer {
             )
         };
         if copied == 0 && !focused_window.is_null() {
-            let matches = focused_window_matches(focused_window.cast(), &target.bounds);
+            let matches = ax_window_matches(
+                focused_window.cast(),
+                u32::try_from(window_id).ok(),
+                &target.bounds,
+            );
             let result = matches.then(|| set_ax_minimized(focused_window.cast()));
             unsafe { core_foundation::base::CFRelease(focused_window) };
             if let Some(result) = result {
@@ -234,7 +239,9 @@ impl WindowMinimizer for PlatformWindowMinimizer {
         let mut result = Err(ForegroundReadError::InspectionFailed);
         for index in 0..count {
             let window: AXUIElementRef = unsafe { CFArrayGetValueAtIndex(array, index) }.cast();
-            if !window.is_null() && focused_window_matches(window, &target.bounds) {
+            if !window.is_null()
+                && ax_window_matches(window, u32::try_from(window_id).ok(), &target.bounds)
+            {
                 result = set_ax_minimized(window);
                 break;
             }
@@ -342,7 +349,27 @@ fn target_for_window(window_id: isize) -> Result<WindowTarget, ForegroundReadErr
         .ok_or(ForegroundReadError::InspectionFailed)
 }
 
-fn focused_window_matches(window: AXUIElementRef, target: &CGRect) -> bool {
+fn ax_window_matches(
+    window: AXUIElementRef,
+    target_window_id: Option<u32>,
+    target_bounds: &CGRect,
+) -> bool {
+    if let Some(target_window_id) = target_window_id {
+        let mut ax_window_id = 0;
+        let result = unsafe { _AXUIElementGetWindow(window, &mut ax_window_id) };
+        if result == 0 {
+            return window_ids_match(ax_window_id, target_window_id);
+        }
+    }
+
+    ax_window_geometry_matches(window, target_bounds)
+}
+
+fn window_ids_match(ax_window_id: u32, target_window_id: u32) -> bool {
+    ax_window_id == target_window_id
+}
+
+fn ax_window_geometry_matches(window: AXUIElementRef, target: &CGRect) -> bool {
     let Some(position) =
         copy_ax_value::<core_graphics::geometry::CGPoint>(window, "AXPosition", AX_VALUE_CG_POINT)
     else {
@@ -403,5 +430,11 @@ mod tests {
     fn intervention_geometry_requires_a_tight_match() {
         assert!(geometry_value_matches(100.0, 107.9));
         assert!(!geometry_value_matches(100.0, 108.1));
+    }
+
+    #[test]
+    fn ax_window_ids_are_compared_exactly() {
+        assert!(window_ids_match(42, 42));
+        assert!(!window_ids_match(41, 42));
     }
 }

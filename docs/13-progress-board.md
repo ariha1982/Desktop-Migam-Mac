@@ -177,7 +177,7 @@
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
 | BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
-| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, Kick 오버레이 전면 점유와 AX focused window 실패로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 오버레이 제외 재검증·AXWindows·Rust fallback 적용, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, Kick 오버레이 전면 점유와 AX/CG frame 불일치로 동작하지 않음 | Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 오버레이 제외 재검증·AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
 
 심각도:
 
@@ -283,6 +283,8 @@
 | 2026-08-24 | 사진 배달·집중 보호 수정 후 전체 bundle build | 통과 | 수정된 `.app`과 `Desktop Migam Mac_0.1.0_aarch64.dmg` 생성 |
 | 2026-08-24 | 집중 보호 재수정 후 자동 검사 | 통과 | 프런트 25개·Rust 48개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
 | 2026-08-24 | 집중 보호 재수정 후 전체 bundle build | 통과 | 새 브랜치에서 `.app`과 Apple Silicon DMG 생성 |
+| 2026-08-24 | macOS AX/CG 창 식별 수정 후 자동 검사 | 통과 | AX 창의 실제 `CGWindowID` 직접 대조, 프런트 25개·Rust 49개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
+| 2026-08-24 | AX/CG 창 식별 수정 후 전체 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성, 새 앱 실행 |
 
 ## 시간 예산
 
@@ -298,10 +300,10 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 집중 보호의 Kick 오버레이 제외 재검증·AXWindows·Rust fallback 구현, 새 브랜치 배포 검증 중
-마지막 성공 검사: 2026-08-24 프런트 25개·Rust 48개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
-완료한 기능: AppKit/CoreGraphics 전면 창 감지, 다중 경로 Accessibility 최소화, 개입 결과 UI, Rust fallback, 사진 배달 canvas
-다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 결과 상태와 실제 최소화를 수동 확인
+현재 상태: macOS 집중 보호가 AX 창의 실제 `CGWindowID`를 직접 대조하도록 수정됐고 새 브랜치 배포 검증 중
+마지막 성공 검사: 2026-08-24 프런트 25개·Rust 49개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
+완료한 기능: AppKit/CoreGraphics 전면 창 감지, `CGWindowID` 기반 Accessibility 최소화, 개입 결과 UI, Rust fallback, 사진 배달 canvas
+다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 `방해 창 최소화 완료` 상태와 실제 최소화를 수동 확인
 알려진 위험: 화면 기록 권한이 없으면 창 제목이 비어 제목 규칙이 매치되지 않을 수 있으며, 손쉬운 사용 권한 없이는 최소화를 안전하게 거부함; `macOSPrivateApi` 사용으로 Mac App Store 배포 불가; 개발 앱은 미서명·미공증
 실행/테스트 방법: `export PATH="/opt/homebrew/opt/rustup/bin:$PATH"`; `npm run tauri -- dev` 또는 생성된 `.app` 실행
 ```
