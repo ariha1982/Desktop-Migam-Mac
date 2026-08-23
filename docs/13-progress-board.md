@@ -177,7 +177,7 @@
 | BUG-001 |  |  |  |  |  |
 | BUG-002 | S1 | Windows에서 Vite가 잠긴 Rust `.exe`를 감시해 EBUSY 종료 | `npm run tauri -- dev` | Codex | 수정 완료 — `src-tauri/target`, `.tools` 감시 제외 |
 | BUG-003 | S2 | macOS 사진 배달에서 사진만 보이고 감자펫 스프라이트가 보이지 않음 | 우클릭 `사진 배달 테스트` | Codex | 수정 완료 — canvas 직접 렌더링, 사용자 재검증 대기 |
-| BUG-004 | S1 | macOS 집중 보호가 권한 누락, 브라우저 이름 차이, CG 제목 누락, 자체 설정창 전면 점유, Kick 오버레이와 AX/CG frame 불일치로 동작하지 않음 | Safari/Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — 평상시·완료 시 자체 PID 제외, AX focused 제목·ID 감지, AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
+| BUG-004 | S1 | macOS 집중 보호가 권한 누락, CG 창/제목 누락, 자체 설정창 전면 점유, Kick 오버레이와 AX/CG frame 불일치로 동작하지 않음 | Safari/Whale YouTube 규칙으로 Focus 시작 | Codex | 재수정 완료 — AX-only focused snapshot, polling 전용 외부창 cache, fresh 완료 검증, AXWindows·Rust fallback 및 `CGWindowID` 직접 대조 적용, 사용자 재검증 대기 |
 | BUG-005 | S2 | 집중 보호 설정 저장 시 권한 요청 API를 다시 호출해 손쉬운 사용 프롬프트가 반복됨 | 집중 보호를 켜고 설정 저장 | Codex | 수정 완료 — 저장 후 비대화형 권한 조회만 실행, 요청은 `권한 설정` 버튼으로 제한 |
 
 심각도:
@@ -292,6 +292,8 @@
 | 2026-08-24 | Safari 전경 감지 재수정 후 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성 |
 | 2026-08-24 | 자체 창 제외 polling 수정 후 자동 검사 | 통과 | 설정창 뒤 외부 전경창 유지 및 전체 화면 보호 사유 분리, 프런트 25개·Rust 51개 테스트, typecheck, Vite build, rustfmt, Clippy 통과 |
 | 2026-08-24 | 자체 창 제외 polling 수정 후 bundle build | 통과 | 수정된 `.app`과 Apple Silicon DMG 재생성 |
+| 2026-08-24 | AX-only 전경 snapshot 수정 후 자동 검사 | 통과 | Safari AX ID·제목·위치·크기 직접 snapshot과 polling 전용 cache 추가, 프런트 25개·Rust 51개 테스트, typecheck, rustfmt, Clippy 통과 |
+| 2026-08-24 | AX-only 전경 snapshot 수정 후 bundle build | 통과 | Vite production build와 수정된 `.app`·Apple Silicon DMG 재생성 |
 
 ## 시간 예산
 
@@ -307,7 +309,7 @@
 ## 마지막 인수인계
 
 ```text
-현재 상태: macOS 집중 보호 polling과 완료 재검증이 자체 PID를 제외하고 AX focused 제목·`CGWindowID`로 Safari 전경 창을 선택함
+현재 상태: macOS 집중 보호는 Safari 전경 시 AX-only snapshot을 만들고 설정창 전경 시 polling 전용 외부창 cache를 사용하며 완료 시 fresh 재검증함
 마지막 성공 검사: 2026-08-24 프런트 25개·Rust 51개 테스트, typecheck, Vite build, rustfmt, Clippy, `.app`·DMG build 통과
 완료한 기능: AppKit/CoreGraphics/Accessibility 전면 창 감지, `CGWindowID` 기반 최소화, 비민감 감지 실패 사유, 사용자 버튼 전용 권한 요청, 개입 결과 UI, Rust fallback, 사진 배달 canvas
 다음으로 할 일: 새 앱에서 Whale/YouTube 감지 후 `방해 창 최소화 완료` 상태와 실제 최소화를 수동 확인

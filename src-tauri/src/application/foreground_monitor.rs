@@ -117,7 +117,7 @@ impl ForegroundMonitor {
         let active = focus_running && !emergency_stopped && settings.intervention_enabled;
         let snapshot = if active {
             self.source
-                .foreground_window_excluding(self.application_process_id)
+                .monitored_foreground_window_excluding(self.application_process_id)
                 .ok()
                 .flatten()
         } else {

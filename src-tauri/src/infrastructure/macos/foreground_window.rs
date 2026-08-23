@@ -1,4 +1,4 @@
-use std::{ffi::c_void, ptr};
+use std::{ffi::c_void, ptr, sync::Mutex};
 
 use core_foundation::{
     array::{CFArray, CFArrayRef},
@@ -59,14 +59,26 @@ unsafe extern "C" {
 }
 
 #[derive(Default)]
-pub struct PlatformForegroundWindowSource;
+pub struct PlatformForegroundWindowSource {
+    last_external: Mutex<Option<WindowSnapshot>>,
+}
 
 #[derive(Default)]
 pub struct PlatformWindowMinimizer;
 
 impl PlatformForegroundWindowSource {
-    pub const fn new() -> Self {
-        Self
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    fn remember_external(&self, snapshot: &WindowSnapshot) {
+        if let Ok(mut last_external) = self.last_external.lock() {
+            *last_external = Some(snapshot.clone());
+        }
+    }
+
+    fn last_external(&self) -> Option<WindowSnapshot> {
+        self.last_external.lock().ok()?.clone()
     }
 }
 
@@ -97,6 +109,12 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
         }
         let process_name = application.localizedName().map(|name| name.to_string());
         let focused_window = focused_ax_window(process_id);
+        if let Some(snapshot) = focused_window
+            .as_ref()
+            .and_then(|focused| snapshot_from_focused_ax(process_id, process_name.clone(), focused))
+        {
+            return Ok(Some(snapshot));
+        }
 
         let windows =
             window_list(kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements)?;
@@ -145,6 +163,12 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
             NSRunningApplication::runningApplicationWithProcessIdentifier(process_id)
                 .and_then(|application| application.localizedName().map(|name| name.to_string()));
         let focused_window = focused_ax_window(process_id);
+        if let Some(snapshot) = focused_window
+            .as_ref()
+            .and_then(|focused| snapshot_from_focused_ax(process_id, process_name.clone(), focused))
+        {
+            return Ok(Some(snapshot));
+        }
         Ok(snapshot_for_process(
             &windows,
             process_id,
@@ -152,11 +176,32 @@ impl ForegroundWindowSource for PlatformForegroundWindowSource {
             focused_window.as_ref(),
         ))
     }
+
+    fn monitored_foreground_window_excluding(
+        &self,
+        excluded_process_id: u32,
+    ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+        let own_app_is_frontmost = NSWorkspace::sharedWorkspace()
+            .frontmostApplication()
+            .is_some_and(|application| {
+                u32::try_from(application.processIdentifier()).ok() == Some(excluded_process_id)
+            });
+        let snapshot = self.foreground_window_excluding(excluded_process_id)?;
+        if let Some(snapshot) = snapshot {
+            self.remember_external(&snapshot);
+            return Ok(Some(snapshot));
+        }
+        if own_app_is_frontmost {
+            return Ok(self.last_external());
+        }
+        Ok(None)
+    }
 }
 
 struct FocusedAxWindow {
     window_id: u32,
     title: Option<String>,
+    bounds: CGRect,
 }
 
 fn focused_ax_window(process_id: libc::pid_t) -> Option<FocusedAxWindow> {
@@ -185,8 +230,34 @@ fn focused_ax_window(process_id: libc::pid_t) -> Option<FocusedAxWindow> {
     let window: AXUIElementRef = focused_window.cast();
     let id_result = unsafe { _AXUIElementGetWindow(window, &mut window_id) };
     let title = copy_ax_string(window, "AXTitle");
+    let position =
+        copy_ax_value::<core_graphics::geometry::CGPoint>(window, "AXPosition", AX_VALUE_CG_POINT);
+    let size = copy_ax_value::<core_graphics::geometry::CGSize>(window, "AXSize", AX_VALUE_CG_SIZE);
     unsafe { core_foundation::base::CFRelease(focused_window) };
-    (id_result == 0 && window_id != 0).then_some(FocusedAxWindow { window_id, title })
+    let (Some(position), Some(size)) = (position, size) else {
+        return None;
+    };
+    (id_result == 0 && window_id != 0 && size.width > 1.0 && size.height > 1.0).then_some(
+        FocusedAxWindow {
+            window_id,
+            title,
+            bounds: CGRect::new(&position, &size),
+        },
+    )
+}
+
+fn snapshot_from_focused_ax(
+    process_id: libc::pid_t,
+    process_name: Option<String>,
+    focused: &FocusedAxWindow,
+) -> Option<WindowSnapshot> {
+    snapshot_from_parts(
+        isize::try_from(focused.window_id).ok()?,
+        process_id,
+        process_name,
+        focused.title.clone(),
+        focused.bounds,
+    )
 }
 
 fn snapshot_for_process(
@@ -233,6 +304,22 @@ fn snapshot_from_window(
     if bounds.size.width <= 1.0 || bounds.size.height <= 1.0 {
         return None;
     }
+    snapshot_from_parts(
+        isize::try_from(window_id).ok()?,
+        process_id,
+        process_name,
+        title.or_else(|| string_value(window, unsafe { kCGWindowName })),
+        bounds,
+    )
+}
+
+fn snapshot_from_parts(
+    window_id: isize,
+    process_id: libc::pid_t,
+    process_name: Option<String>,
+    title: Option<String>,
+    bounds: CGRect,
+) -> Option<WindowSnapshot> {
     let display_bounds = display_containing(&bounds);
     let is_fullscreen = display_bounds.is_some_and(|display| {
         nearly_equal(bounds.origin.x, display.origin.x)
@@ -242,10 +329,10 @@ fn snapshot_from_window(
     });
 
     Some(WindowSnapshot {
-        window_id: isize::try_from(window_id).ok()?,
+        window_id,
         process_id: u32::try_from(process_id).ok()?,
         process_name,
-        title: title.or_else(|| string_value(window, unsafe { kCGWindowName })),
+        title,
         is_visible: true,
         is_minimized: false,
         is_fullscreen,

@@ -25,6 +25,13 @@ pub trait ForegroundWindowSource: Send + Sync {
             .foreground_window()?
             .filter(|snapshot| snapshot.process_id != process_id))
     }
+
+    fn monitored_foreground_window_excluding(
+        &self,
+        process_id: u32,
+    ) -> Result<Option<WindowSnapshot>, ForegroundReadError> {
+        self.foreground_window_excluding(process_id)
+    }
 }
 
 pub trait WindowMinimizer: Send + Sync {
